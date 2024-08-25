@@ -31,7 +31,12 @@ def call_ibm_granite(text):
     response = requests.post(f"{IBM_CLOUD_URL}/ml/v1-beta/generation/text", headers=headers, json=data)
     return response.json()
 
-def generate_report():
+def generate_report(complete_startup_data, metrics):
+    # Placeholder logic for generating a report
+    report = "This is a placeholder report.\n"
+    report += f"Startup Data: {complete_startup_data}\n"
+    report += f"Metrics: {metrics}\n"
+    return report
     st.title("Venture Capital Assistant")
     st.write("Upload your startup pitch deck and get professional VC analysis.")
 
