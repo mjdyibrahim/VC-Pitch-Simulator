@@ -4,7 +4,7 @@ import os
 
 def process_file(file_path):
     file_extension = os.path.splitext(file_path)[1].lower()
-    print(f"File extension: {file_extension}")  # Debug statement
+    print(f"Processing file: {file_path}, File extension: {file_extension}")  # Debug statement
     
     if file_extension == '.pdf':
         return extract_text_from_pdf(file_path)
