@@ -48,7 +48,10 @@ def extract_data(text_content):
         prompt_template = json.load(file)
 
     # Format the prompt with the text content
-    prompt = prompt_template["prompt"].format(text_content=text_content)
+    try:
+        prompt = prompt_template["prompt"].format(text_content=text_content)
+    except KeyError:
+        raise KeyError("The key 'prompt' is missing from the JSON template.")
 
     # Prepare the request payload
     data = {
