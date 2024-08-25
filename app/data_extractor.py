@@ -14,16 +14,17 @@ ibm_api_key = os.getenv("IBM_API_KEY")
 ibm_project_id = os.getenv("PROJECT_ID")
 ibm_cloud_url = os.getenv("IBM_CLOUD_URL")
 
-def load_schema(schema_path):
-    with open(schema_path, 'r') as file:
+def load_json(file_path):
+    with open(file_path, 'r') as file:
         return json.load(file)
 
-def generate_prompt(section, data_points):
-    prompt = f"Extract the following data points for {section}: {', '.join(data_points)}"
-    return prompt
+def generate_prompt(section, data_point, prompt_template, extracted_text):
+    prompt = prompt_template.format(data_point=data_point)
+    return f"Given Pitch Deck Content: {extracted_text}\n\nExtracted data for {section}\n\nExtracting Data point {data_point}: {prompt}"
 
-def extract_data(text, schema_path):
-    schema = load_schema(schema_path)
+def extract_data(text, schema_path, prompts_path):
+    schema = load_json(schema_path)
+    prompts = load_json(prompts_path)
     extracted_data = {}
 
     model = Model(
@@ -43,10 +44,13 @@ def extract_data(text, schema_path):
     )
 
     for section, data_points in schema.items():
-        prompt = generate_prompt(section, data_points)
-        full_prompt = f"{prompt}\n\n{text}"
-        generated_response = model.generate(prompt=full_prompt)
-        extracted_data[section] = parse_response(generated_response)
+        extracted_data[section] = {}
+        for data_point in data_points:
+            prompt_template = prompts.get(section, {}).get(data_point, "")
+            if prompt_template:
+                prompt = generate_prompt(section, data_point, prompt_template, text)
+                generated_response = model.generate(prompt=prompt)
+                extracted_data[section][data_point] = parse_response(generated_response)
 
     return extracted_data
 
