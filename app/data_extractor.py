@@ -36,7 +36,7 @@ def extract_data(text_content):
         # Add more fields as needed
     }
     
-    return extracted_dataimport json
+    return extracted_data
 import os
 import requests
 from .config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
