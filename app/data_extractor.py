@@ -1,4 +1,20 @@
-import json
+def get_iam_token(api_key):
+    """Get IAM token using the API key."""
+    url = "https://iam.cloud.ibm.com/identity/token"
+    # Get IAM token
+    iam_token = get_iam_token(IBM_API_KEY)
+    
+    headers = {
+        "Authorization": f"Bearer {iam_token}",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    data = {
+        "grant_type": "urn:ibm:params:oauth:grant-type:apikey",
+        "apikey": api_key,
+    }
+    response = requests.post(url, headers=headers, data=data)
+    response.raise_for_status()
+    return response.json()["access_token"]
 import os
 import getpass
 
