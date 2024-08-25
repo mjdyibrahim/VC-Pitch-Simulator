@@ -16,7 +16,7 @@ import requests
 def call_ibm_granite(text):
     print(f"Debug: IBM_API_KEY starts with {IBM_API_KEY[:5]}")  # Debug statement
     headers = {
-        "Authorization": f"Basic {IBM_API_KEY}",
+        "Authorization": f"Bearer {IBM_API_KEY}",
         "Content-Type": "application/json"
     }
     
