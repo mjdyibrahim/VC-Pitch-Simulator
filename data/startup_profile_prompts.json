@@ -1,0 +1,155 @@
+{
+    "Info": {
+      "questions": [
+        "What is the Startup Name?",
+        "When was the startup Date Started?",
+        "What is the Registration Type?",
+        "What is the Registration Country?",
+        "What is the Contact Info?"
+      ]
+    },
+    "Team": {
+      "questions": [
+        "How many team members do you have?",
+        "List the team members with the following details:",
+        {
+          "Name": "What is the team member's name?",
+          "Title": "What is the team member's title?",
+          "Availability Per Week": "How many hours per week is the team member available?",
+          "Involved Since": "Since when has the team member been involved?",
+          "Equity %": "What percentage of equity does the team member hold?",
+          "Salary %": "What percentage of salary does the team member receive?",
+          "Years of Experience": "How many years of experience does the team member have?",
+          "Academic Degree": {
+            "Undergraduate": "Does the team member have an undergraduate degree?",
+            "Graduate Degree": "Does the team member have a graduate degree?",
+            "Masters": "Does the team member have a master's degree?",
+            "PhD or More": "Does the team member have a PhD or higher degree?"
+          },
+          "Startup Experience": {
+            "Has Been Part of a Startup Team": "Has the team member been part of a startup team?",
+            "Has Been the Founder of a Startup": "Has the team member been the founder of a startup?",
+            "Has Previous C-Level Position": "Has the team member held a previous C-level position?",
+            "Has Been Part of a Successful Exit": "Has the team member been part of a successful exit?"
+          },
+          "Role": {
+            "Marketing": "Is the team member's role in Marketing?",
+            "Sales": "Is the team member's role in Sales?",
+            "Product": "Is the team member's role in Product?",
+            "Creative": "Is the team member's role in Creative?",
+            "Technical": "Is the team member's role in Technical?",
+            "Operation": "Is the team member's role in Operation?",
+            "Other": "What other role does the team member have?"
+          }
+        },
+        "Can you provide an overview of the team’s qualifications and expertise?",
+        "How would you assess the team’s experience and ability to execute the business plan?"
+      ]
+    },
+    "Fundraising": {
+      "questions": [
+        "How much are you currently raising?",
+        "How much have you raised so far?",
+        "What are the sources of your funds?",
+        {
+          "Founders": "Are the funds from Founders?",
+          "Friends and Family": "Are the funds from Friends and Family?",
+          "Crowdfunding": "Are the funds from Crowdfunding?",
+          "Accelerator": "Are the funds from an Accelerator?",
+          "Angel Investor": "Are the funds from an Angel Investor?",
+          "VC": "Are the funds from a VC?"
+        },
+        "How are you planning to spend the funds being raised?",
+        {
+          "Product": "Will the funds be spent on Product?",
+          "Marketing": "Will the funds be spent on Marketing?",
+          "Team": "Will the funds be spent on Team?",
+          "Operations": "Will the funds be spent on Operations?"
+        },
+        "Have you received any patents?",
+        "Have you accomplished any significant achievements?",
+        "Is your pitch deck ready?"
+      ]
+    },
+    "Market": {
+      "questions": [
+        "What are consumers currently paying (on an annual basis) to resolve this problem or satisfy this desire?",
+        "How big is your market in numbers?",
+        "What market share are you planning to acquire in the next 3 years?"
+      ]
+    },
+    "Business Model": {
+      "questions": [
+        "What is your primary industry?",
+        "What are you charging for?",
+        {
+          "Capital": "Are you charging for Capital (Real Estate or Cash)?",
+          "Content": "Are you charging for Content?",
+          "Data / Information": "Are you charging for Data / Information?",
+          "Goods / Widgets (Resellers)": "Are you charging for Goods / Widgets (Resellers)?",
+          "Goods / Widgets (Producers)": "Are you charging for Goods / Widgets (Producers)?",
+          "Hard Science": "Are you charging for Hard Science (BioTech, Pharma, AI, etc.)?",
+          "Network or Community": "Are you charging for Network or Community?",
+          "Non-Physical Direct to Consumer": "Are you charging for Non-Physical Direct to Consumer (in-app purchases, Freemium, etc.)?",
+          "Physical Direct to Consumer": "Are you charging for Physical Direct to Consumer (monthly deliveries, etc.)?",
+          "Services": "Are you charging for Services (health care, professional services, legal services, etc.)?",
+          "Technology / Platform": "Are you charging for Technology / Platform?",
+          "Other": "What other charges are you applying?"
+        },
+        "Which of the following best describes the primary way your venture will make money?",
+        {
+          "Advertising": "Is your revenue model based on Advertising?",
+          "Pay Per Unit": "Is your revenue model based on Pay Per Unit?",
+          "Pay Per Project": "Is your revenue model based on Pay Per Project?",
+          "Brokerage or Marketplace": {
+            "Consumer to Consumer": "Is your marketplace model Consumer to Consumer (e.g. Airbnb)?",
+            "Enterprise to Enterprise": "Is your marketplace model Enterprise to Enterprise (e.g. New York Stock Exchange)?",
+            "Enterprise to Consumer": "Is your marketplace model Enterprise to Consumer (e.g. Amazon)?"
+          },
+          "Recurring": "Is your revenue model Recurring (Rental, Subscription, Premiums, etc.)?",
+          "Other": "What other revenue model are you using?"
+        },
+        "What is your primary way of acquiring customers?",
+        {
+          "Online Advertising": "Are you using Online Advertising?",
+          "Strategic Partnership": "Are you using Strategic Partnership?",
+          "Affiliate Marketing": "Are you using Affiliate Marketing?",
+          "Conferences & Exhibitions": "Are you using Conferences & Exhibitions?",
+          "Virtual / Word of Mouth": "Are you using Virtual / Word of Mouth?"
+        },
+        "How much do you have to spend on Sales & Marketing to acquire each customer as a percentage of sale value?",
+        {
+          "10": "Is it 10%?",
+          "20": "Is it 20%?",
+          "30": "Is it 30%?"
+        },
+        "What kind of users make up your audience/user base?",
+        {
+          "Everyone": "Is your user base Everyone?",
+          "Niche": "Is your user base Niche?"
+        }
+      ]
+    },
+    "Product": {
+      "questions": [
+        "What is the current stage of development for the product?",
+        {
+          "Idea": "Is the product at the Idea stage?",
+          "Prototype": "Is the product at the Prototype stage?",
+          "Beta": "Is the product at the Beta stage?",
+          "Live": "Is the product at the Live stage?"
+        },
+        "How many prospective customers have you interviewed in the past 3 months?",
+        "What percentage of these prospects said they would purchase the product or service?"
+      ]
+    },
+    "Traction": {
+      "questions": [
+        "Have you already started making sales and generating revenues?",
+        "How much revenue have you realized over the past twelve months?",
+        "How much revenue have you realized over the past three months?",
+        "How many individual leads have resulted in these sales?"
+      ]
+    }
+  }
+  

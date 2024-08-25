@@ -11,28 +11,6 @@ import requests
 
 load_dotenv()
 
-def call_ibm_granite(text):
-    headers = {
-        "Authorization": f"Bearer {IBM_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
-    data = {
-        "model_id": "granite-13b-chat-v2",
-        "inputs": [text],
-        "parameters": {
-            "decoding_method": "greedy",
-            "max_new_tokens": 1000,
-            "min_new_tokens": 0,
-            "stop_sequences": [],
-            "repetition_penalty": 1
-        },
-        "project_id": PROJECT_ID
-    }
-    
-    response = requests.post(f"{IBM_CLOUD_URL}/ml/v1-beta/generation/text", headers=headers, json=data)
-    return response.json()
-
 def main():
     st.title("Venture Capital Assistant")
     st.write("Upload your startup pitch deck and get professional VC analysis.")
@@ -49,7 +27,9 @@ def main():
         text_content = process_file(temp_file_path)
 
         # Extract data using IBM Granite Model
-        startup_data = extract_data(text_content)
+        schema_path = "data/startup_profile_schema.json"
+        prompts_path = "data/startup_profile_prompts.json"
+        startup_data = extract_data(text_content, schema_path, prompts_path)
 
         # Display extracted data
         st.subheader("Extracted Startup Data")
@@ -68,7 +48,7 @@ def main():
         st.write(report)
 
         # Clean up temporary file
-        os.remove("temp_pitch_deck")
+        os.remove(temp_file_path)
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,123 @@
+{
+  "Info": {
+      "Startup Name": "<STARTUP_NAME>",
+      "Date Started": "<DATE_STARTED>",
+      "Registration Type": "<REGISTRATION_TYPE>",
+      "Registration Country": "<REGISTRATION_COUNTRY>",
+      "Contact Info": "<CONTACT_INFO>"
+  },
+  "Team": {
+      "Number of Team Members": "<NUMBER_OF_TEAM_MEMBERS>",
+      "Team Members": {
+          "Name": "<TEAM_MEMBER_NAME>",
+          "Title": "<TEAM_MEMBER_TITLE>",
+          "Availability Per Week": "<AVAILABILITY_PER_WEEK>",
+          "Involved Since": "<INVOLVED_SINCE>",
+          "Equity %": "<EQUITY_PERCENTAGE>",
+          "Salary %": "<SALARY_PERCENTAGE>",
+          "Years of Experience": "<YEARS_OF_EXPERIENCE>",
+          "Academic Degree": {
+              "Undergraduate": "<UNDERGRADUATE_DEGREE>",
+              "Graduate Degree": "<GRADUATE_DEGREE>",
+              "Masters": "<MASTERS_DEGREE>",
+              "PhD or More": "<PHD_OR_MORE>"
+          },
+          "Startup Experience": {
+              "Has Been Part of a Startup Team": "<HAS_BEEN_PART_OF_STARTUP_TEAM>",
+              "Has Been the Founder of a Startup": "<HAS_BEEN_FOUNDER_OF_STARTUP>",
+              "Has Previous C-Level Position": "<HAS_PREVIOUS_CLEVEL_POSITION>",
+              "Has Been Part of a Successful Exit": "<HAS_SUCCESSFUL_EXIT>"
+          },
+          "Role": "<TEAM_MEMBER_ROLE>"
+      },
+      "Team Overview": "<TEAM_OVERVIEW>",
+      "Team Assessment": "<TEAM_ASSESSMENT>"
+  },
+  "Fundraising": {
+      "Current Amount Being Raised": "<CURRENT_AMOUNT_BEING_RAISED>",
+      "Amount Raised So Far": "<AMOUNT_RAISED_SO_FAR>",
+      "Sources of Funds": {
+          "Founders": "<FOUNDERS>",
+          "Friends and Family": "<FRIENDS_AND_FAMILY>",
+          "Crowdfunding": "<CROWDFUNDING>",
+          "Accelerator": "<ACCELERATOR>",
+          "Angel Investor": "<ANGEL_INVESTOR>",
+          "VC": "<VC>"
+      },
+      "Spending Allocation": {
+          "Product": "<SPENDING_ON_PRODUCT>",
+          "Marketing": "<SPENDING_ON_MARKETING>",
+          "Team": "<SPENDING_ON_TEAM>",
+          "Operations": "<SPENDING_ON_OPERATIONS>"
+      },
+      "Received Patents": "<RECEIVED_PATENTS>",
+      "Significant Achievements": "<SIGNIFICANT_ACHIEVEMENTS>",
+      "Pitch Deck Ready": "<PITCH_DECK_READY>"
+  },
+  "Market": {
+      "Consumer Payment": "<CONSUMER_PAYMENT>",
+      "Market Size": "<MARKET_SIZE>",
+      "Market Share in 3 Years": "<MARKET_SHARE_IN_3_YEARS>"
+  },
+  "Business Model": {
+      "Primary Industry": "<PRIMARY_INDUSTRY>",
+      "Charges": {
+          "Capital": "<CHARGES_CAPITAL>",
+          "Content": "<CHARGES_CONTENT>",
+          "Data / Information": "<CHARGES_DATA_INFORMATION>",
+          "Goods / Widgets (Resellers)": "<CHARGES_GOODS_RESELLERS>",
+          "Goods / Widgets (Producers)": "<CHARGES_GOODS_PRODUCERS>",
+          "Hard Science": "<CHARGES_HARD_SCIENCE>",
+          "Network or Community": "<CHARGES_NETWORK_COMMUNITY>",
+          "Non-Physical Direct to Consumer": "<CHARGES_NON_PHYSICAL_DIRECT_CONSUMER>",
+          "Physical Direct to Consumer": "<CHARGES_PHYSICAL_DIRECT_CONSUMER>",
+          "Services": "<CHARGES_SERVICES>",
+          "Technology / Platform": "<CHARGES_TECHNOLOGY_PLATFORM>",
+          "Other": "<CHARGES_OTHER>"
+      },
+      "Revenue Model": {
+          "Advertising": "<REVENUE_MODEL_ADVERTISING>",
+          "Pay Per Unit": "<REVENUE_MODEL_PAY_PER_UNIT>",
+          "Pay Per Project": "<REVENUE_MODEL_PAY_PER_PROJECT>",
+          "Brokerage or Marketplace": {
+              "Consumer to Consumer": "<BROKERAGE_C2C>",
+              "Enterprise to Enterprise": "<BROKERAGE_E2E>",
+              "Enterprise to Consumer": "<BROKERAGE_E2C>"
+          },
+          "Recurring": "<REVENUE_MODEL_RECURRING>",
+          "Other": "<REVENUE_MODEL_OTHER>"
+      },
+      "Customer Acquisition Method": {
+          "Online Advertising": "<ACQUISITION_ONLINE_ADVERTISING>",
+          "Strategic Partnership": "<ACQUISITION_STRATEGIC_PARTNERSHIP>",
+          "Affiliate Marketing": "<ACQUISITION_AFFILIATE_MARKETING>",
+          "Conferences & Exhibitions": "<ACQUISITION_CONFERENCES_EXHIBITIONS>",
+          "Virtual / Word of Mouth": "<ACQUISITION_VIRTUAL_WORD_OF_MOUTH>"
+      },
+      "Customer Acquisition Cost": {
+          "10": "<COST_10>",
+          "20": "<COST_20>",
+          "30": "<COST_30>"
+      },
+      "User Base": {
+          "Everyone": "<USER_BASE_EVERYONE>",
+          "Niche": "<USER_BASE_NICHE>"
+      }
+  },
+  "Product": {
+      "Product Stage": {
+          "Idea": "<PRODUCT_STAGE_IDEA>",
+          "Prototype": "<PRODUCT_STAGE_PROTOTYPE>",
+          "Beta": "<PRODUCT_STAGE_BETA>",
+          "Live": "<PRODUCT_STAGE_LIVE>"
+      },
+      "Prospective Customers Interviewed": "<PROSPECTIVE_CUSTOMERS_INTERVIEWED>",
+      "Percentage of Purchase Intent": "<PERCENTAGE_PURCHASE_INTENT>"
+  },
+  "Traction": {
+      "Sales and Revenues Started": "<SALES_REVENUES_STARTED>",
+      "Revenue Past 12 Months": "<REVENUE_PAST_12_MONTHS>",
+      "Revenue Past 3 Months": "<REVENUE_PAST_3_MONTHS>",
+      "Number of Leads Resulting in Sales": "<NUMBER_LEADS_RESULTING_IN_SALES>"
+  }
+}

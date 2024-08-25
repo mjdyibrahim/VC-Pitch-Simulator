@@ -1,112 +1,55 @@
-def get_iam_token(api_key):
-    """Get IAM token using the API key."""
-    url = "https://iam.cloud.ibm.com/identity/token"
-    # Get IAM token
-    iam_token = get_iam_token(IBM_API_KEY)
-    
-    headers = {
-        "Authorization": f"Bearer {iam_token}",
-        "Content-Type": "application/x-www-form-urlencoded",
-    }
-    data = {
-        "grant_type": "urn:ibm:params:oauth:grant-type:apikey",
-        "apikey": api_key,
-    }
-    response = requests.post(url, headers=headers, data=data)
-    response.raise_for_status()
-    return response.json()["access_token"]
+from ibm_watsonx_ai.foundation_models import Model
+from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes
+from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
+from ibm_watsonx_ai.credentials import Credentials
+import os
 import json
-import os
-import getpass
+from dotenv import load_dotenv
 
-IBM_API_KEY = os.getenv("IBM_API_KEY") or getpass.getpass("Please enter your WML api key (hit enter): ")
-IBM_CLOUD_URL = os.getenv("IBM_CLOUD_URL", "https://us-south.ml.cloud.ibm.com")
+# Load environment variables from .env file
+load_dotenv()
 
-try:
-    PROJECT_ID = os.environ["PROJECT_ID"]
-except KeyError:
-    PROJECT_ID = input("Please enter your project_id (hit enter): ")
-import os
-print(f"Debug: Environment Variables - IBM_API_KEY: {os.getenv('IBM_API_KEY')}, IBM_CLOUD_URL: {os.getenv('IBM_CLOUD_URL')}, PROJECT_ID: {os.getenv('PROJECT_ID')}")
-import requests
+# Retrieve credentials from environment variables
+ibm_api_key = os.getenv("IBM_API_KEY")
+ibm_project_id = os.getenv("PROJECT_ID")
+ibm_cloud_url = os.getenv("IBM_CLOUD_URL")
 
-def call_ibm_granite(text):
-    print(f"Debug: IBM_API_KEY starts with {IBM_API_KEY[:5]}")  # Debug statement
-    headers = {
-        "Authorization": f"Bearer {IBM_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
-    data = {
-        "model_id": "granite-13b-chat-v2",
-        "inputs": [text],
-        "parameters": {
-            "decoding_method": "greedy",
-            "max_new_tokens": 1000,
-            "min_new_tokens": 0,
-            "stop_sequences": [],
-            "repetition_penalty": 1
+def load_schema(schema_path):
+    with open(schema_path, 'r') as file:
+        return json.load(file)
+
+def generate_prompt(section, data_points):
+    prompt = f"Extract the following data points for {section}: {', '.join(data_points)}"
+    return prompt
+
+def extract_data(text, schema_path):
+    schema = load_schema(schema_path)
+    extracted_data = {}
+
+    model = Model(
+        model_id=ModelTypes.GRANITE_13B_CHAT_V2,
+        params={
+            GenParams.MAX_NEW_TOKENS: 900,
+            GenParams.RETURN_OPTIONS: {
+                'input_text': True,
+                'generated_tokens': True,
+            },
         },
-        "project_id": PROJECT_ID
-    }
-    
-    print(f"Debug: Sending request to {IBM_CLOUD_URL}/ml/v1-beta/generation/text with headers {headers} and data {data}")
-    response = requests.post(f"{IBM_CLOUD_URL}/ml/v1-beta/generation/text", headers=headers, json=data)
-    print(f"Debug: Response status code: {response.status_code}")
-    print(f"Debug: Response content: {response.content}")
-    return response.json()
+        credentials=Credentials(
+            api_key=ibm_api_key,
+            url=ibm_cloud_url,
+        ),
+        project_id=ibm_project_id,
+    )
 
-def extract_data(text_content):
-    # Use the IBM Granite model to extract data
-    response = call_ibm_granite(text_content)
-    
-    # Process the response to extract relevant data
-    # This is a placeholder; you'll need to implement the actual data extraction logic
-    extracted_data = {
-        "company_name": "Example Company",
-        "industry": "Technology",
-        "funding_stage": "Series A",
-        # Add more fields as needed
-    }
-    
+    for section, data_points in schema.items():
+        prompt = generate_prompt(section, data_points)
+        full_prompt = f"{prompt}\n\n{text}"
+        generated_response = model.generate(prompt=full_prompt)
+        extracted_data[section] = parse_response(generated_response)
+
     return extracted_data
-import os
-import requests
-from .config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
 
-def extract_data(text_content):
-    # Load the predefined JSON template
-    with open("data/startup_profile.json", "r") as file:
-        prompt_template = json.load(file)
-
-    # Format the prompt with the text content
-    try:
-        prompt = prompt_template["prompt"].format(text_content=text_content)
-    except KeyError:
-        raise KeyError("The key 'prompt' is missing from the JSON template.")
-
-    # Prepare the request payload
-    data = {
-        "model_id": "granite-13b-chat-v2",
-        "inputs": [prompt],
-        "parameters": {
-            "decoding_method": "greedy",
-            "max_new_tokens": 1000,
-            "min_new_tokens": 0,
-            "stop_sequences": [],
-            "repetition_penalty": 1
-        },
-        "project_id": PROJECT_ID
-    }
-
-    # Set the headers for the request
-    headers = {
-        "Authorization": f"Bearer {IBM_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    # Send the request to IBM Watson
-    response = requests.post(f"{IBM_CLOUD_URL}/ml/v1-beta/generation/text", headers=headers, json=data)
-
-    # Return the extracted data
-    return response.json()
+def parse_response(response):
+    generated_text = response.get('results', [{}])[0].get('generated_text', '')
+    return generated_text

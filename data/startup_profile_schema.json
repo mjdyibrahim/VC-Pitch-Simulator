@@ -1,0 +1,123 @@
+{
+    "Info": {
+        "Startup Name": "string",
+        "Date Started": "date",
+        "Registration Type": "string",
+        "Registration Country": "string",
+        "Contact Info": "string"
+    },
+    "Team": {
+        "Number of Team Members": "integer",
+        "Team Members": {
+            "Name": "string",
+            "Title": "string",
+            "Availability Per Week": "integer",
+            "Involved Since": "date",
+            "Equity %": "number",
+            "Salary %": "number",
+            "Years of Experience": "integer",
+            "Academic Degree": {
+                "Undergraduate": "boolean",
+                "Graduate Degree": "boolean",
+                "Masters": "boolean",
+                "PhD or More": "boolean"
+            },
+            "Startup Experience": {
+                "Has Been Part of a Startup Team": "boolean",
+                "Has Been the Founder of a Startup": "boolean",
+                "Has Previous C-Level Position": "boolean",
+                "Has Been Part of a Successful Exit": "boolean"
+            },
+            "Role": "string"
+        },
+        "Team Overview": "string",
+        "Team Assessment": "string"
+    },
+    "Fundraising": {
+        "Current Amount Being Raised": "number",
+        "Amount Raised So Far": "number",
+        "Sources of Funds": {
+            "Founders": "boolean",
+            "Friends and Family": "boolean",
+            "Crowdfunding": "boolean",
+            "Accelerator": "boolean",
+            "Angel Investor": "boolean",
+            "VC": "boolean"
+        },
+        "Spending Allocation": {
+            "Product": "boolean",
+            "Marketing": "boolean",
+            "Team": "boolean",
+            "Operations": "boolean"
+        },
+        "Received Patents": "boolean",
+        "Significant Achievements": "boolean",
+        "Pitch Deck Ready": "boolean"
+    },
+    "Market": {
+        "Consumer Payment": "number",
+        "Market Size": "number",
+        "Market Share in 3 Years": "number"
+    },
+    "Business Model": {
+        "Primary Industry": "string",
+        "Charges": {
+            "Capital": "boolean",
+            "Content": "boolean",
+            "Data / Information": "boolean",
+            "Goods / Widgets (Resellers)": "boolean",
+            "Goods / Widgets (Producers)": "boolean",
+            "Hard Science": "boolean",
+            "Network or Community": "boolean",
+            "Non-Physical Direct to Consumer": "boolean",
+            "Physical Direct to Consumer": "boolean",
+            "Services": "boolean",
+            "Technology / Platform": "boolean",
+            "Other": "string"
+        },
+        "Revenue Model": {
+            "Advertising": "boolean",
+            "Pay Per Unit": "boolean",
+            "Pay Per Project": "boolean",
+            "Brokerage or Marketplace": {
+                "Consumer to Consumer": "boolean",
+                "Enterprise to Enterprise": "boolean",
+                "Enterprise to Consumer": "boolean"
+            },
+            "Recurring": "boolean",
+            "Other": "string"
+        },
+        "Customer Acquisition Method": {
+            "Online Advertising": "boolean",
+            "Strategic Partnership": "boolean",
+            "Affiliate Marketing": "boolean",
+            "Conferences & Exhibitions": "boolean",
+            "Virtual / Word of Mouth": "boolean"
+        },
+        "Customer Acquisition Cost": {
+            "10": "boolean",
+            "20": "boolean",
+            "30": "boolean"
+        },
+        "User Base": {
+            "Everyone": "boolean",
+            "Niche": "boolean"
+        }
+    },
+    "Product": {
+        "Product Stage": {
+            "Idea": "boolean",
+            "Prototype": "boolean",
+            "Beta": "boolean",
+            "Live": "boolean"
+        },
+        "Prospective Customers Interviewed": "integer",
+        "Percentage of Purchase Intent": "number"
+    },
+    "Traction": {
+        "Sales and Revenues Started": "boolean",
+        "Revenue Past 12 Months": "number",
+        "Revenue Past 3 Months": "number",
+        "Number of Leads Resulting in Sales": "integer"
+    }
+}
