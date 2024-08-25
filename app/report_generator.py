@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from .data_extractor import extract_data
 from .user_prompts import prompt_for_missing_info
 from .startup_metrics import calculate_metrics
+from .file_processor import process_file
 from .config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
 import requests
 
@@ -72,5 +73,3 @@ def generate_report(complete_startup_data, metrics):
         # Clean up temporary file
         os.remove("temp_pitch_deck")
 
-if __name__ == "__main__":
-    main()
