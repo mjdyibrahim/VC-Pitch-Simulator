@@ -1,5 +1,13 @@
 import json
-from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
+import getpass
+
+IBM_API_KEY = os.getenv("IBM_API_KEY") or getpass.getpass("Please enter your WML api key (hit enter): ")
+IBM_CLOUD_URL = os.getenv("IBM_CLOUD_URL", "https://us-south.ml.cloud.ibm.com")
+
+try:
+    PROJECT_ID = os.environ["PROJECT_ID"]
+except KeyError:
+    PROJECT_ID = input("Please enter your project_id (hit enter): ")
 import os
 print(f"Debug: Environment Variables - IBM_API_KEY: {os.getenv('IBM_API_KEY')}, IBM_CLOUD_URL: {os.getenv('IBM_CLOUD_URL')}, PROJECT_ID: {os.getenv('PROJECT_ID')}")
 import requests
