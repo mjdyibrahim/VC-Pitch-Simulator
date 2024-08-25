@@ -1,5 +1,7 @@
 import json
 from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
+import os
+print(f"Debug: Environment Variables - IBM_API_KEY: {os.getenv('IBM_API_KEY')}, IBM_CLOUD_URL: {os.getenv('IBM_CLOUD_URL')}, PROJECT_ID: {os.getenv('PROJECT_ID')}")
 import requests
 
 def call_ibm_granite(text):
