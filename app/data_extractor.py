@@ -15,6 +15,7 @@ def get_iam_token(api_key):
     response = requests.post(url, headers=headers, data=data)
     response.raise_for_status()
     return response.json()["access_token"]
+import json
 import os
 import getpass
 
