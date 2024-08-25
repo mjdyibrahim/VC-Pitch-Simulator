@@ -40,12 +40,13 @@ def main():
     uploaded_file = st.file_uploader("Choose your pitch deck file", type=["pdf", "docx", "txt"], key="file_uploader")
 
     if uploaded_file is not None:
-        # Save the uploaded file temporarily
-        with open("temp_pitch_deck", "wb") as f:
+        # Save the uploaded file temporarily with its original extension
+        temp_file_path = f"temp_pitch_deck{os.path.splitext(uploaded_file.name)[1]}"
+        with open(temp_file_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
         # Process the file and extract text
-        text_content = process_file("temp_pitch_deck")
+        text_content = process_file(temp_file_path)
 
         # Extract data using IBM Granite Model
         startup_data = extract_data(text_content)
