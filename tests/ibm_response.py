@@ -1,4 +1,4 @@
-from ..app.data_extractor import call_ibm_granite
+from app.data_extractor import call_ibm_granite
 
 def test_ibm_connection():
     # Sample text to send to IBM Granite
