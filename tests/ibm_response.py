@@ -1,5 +1,5 @@
 from ibm_watsonx_ai import WatsonxAI
-from app.config import IBM_API_KEY, IBM_CLOUD_URL
+from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
 
 def test_ibm_connection():
     # Initialize WatsonxAI client
