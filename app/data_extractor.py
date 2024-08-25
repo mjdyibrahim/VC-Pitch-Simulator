@@ -1,4 +1,5 @@
 import json
+import os
 import getpass
 
 IBM_API_KEY = os.getenv("IBM_API_KEY") or getpass.getpass("Please enter your WML api key (hit enter): ")
