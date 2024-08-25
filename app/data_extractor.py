@@ -33,7 +33,10 @@ def call_ibm_granite(text):
         "project_id": PROJECT_ID
     }
     
+    print(f"Debug: Sending request to {IBM_CLOUD_URL}/ml/v1-beta/generation/text with headers {headers} and data {data}")
     response = requests.post(f"{IBM_CLOUD_URL}/ml/v1-beta/generation/text", headers=headers, json=data)
+    print(f"Debug: Response status code: {response.status_code}")
+    print(f"Debug: Response content: {response.content}")
     return response.json()
 
 def extract_data(text_content):
