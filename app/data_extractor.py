@@ -3,6 +3,7 @@ from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
 import requests
 
 def call_ibm_granite(text):
+    print(f"Debug: IBM_API_KEY starts with {IBM_API_KEY[:5]}")  # Debug statement
     headers = {
         "Authorization": f"Bearer {IBM_API_KEY}",
         "Content-Type": "application/json"
