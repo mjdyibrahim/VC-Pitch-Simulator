@@ -237,6 +237,7 @@ def extract_sections(extracted_text, startup_id, content_id):
 
     def nearest_neighbor_analysis(embedded_text, section_name):
         with knowledge_base_engine.connect() as conn:
+            conn.execute(text("USE vc_simulator"))
             result = conn.execute(text(f"""
                 SELECT section_content FROM knowledge_base
                 WHERE section_name = :section_name
