@@ -239,7 +239,7 @@ def extract_sections(extracted_text, startup_id, content_id):
         with knowledge_base_engine.connect() as conn:
             conn.execute(text("USE vc_simulator"))
             result = conn.execute(text(f"""
-                SELECT section_content FROM knowledge_base
+                SELECT content FROM knowledge_base
                 WHERE section_name = :section_name
             """), {"section_name": section_name})
             section_contents = [row['section_content'] for row in result]
