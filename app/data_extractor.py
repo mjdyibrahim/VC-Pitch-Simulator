@@ -126,7 +126,7 @@ def call_llm_for_section(text, criteria, section_name):
     return {section_name: response}
 
 def extract_sections(file_path, startup_id, content_id):
-    text = extract_text_from_pdf(file_path)
+    extracted_text = extract_text_from_pdf(file_path)
     
     sections = {
         "team" : [
@@ -252,7 +252,7 @@ def extract_sections(file_path, startup_id, content_id):
 
     extracted_sections = {}
     for section, criteria in sections.items():
-        response = call_llm_for_section(text, criteria, section)
+        response = call_llm_for_section(extracted_text, criteria, section)
         section_text = response[section]
         embedded_text = embed_text(section_text)
         extracted_sections[section] = section_text
