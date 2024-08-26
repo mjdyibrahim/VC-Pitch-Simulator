@@ -52,6 +52,20 @@ def create_pitchdeck_content_table():
             )
         """))
 
+def create_pitchdeck_upload_table():
+    with engine.connect() as conn:
+        conn.execute(text(f"""
+            CREATE TABLE IF NOT EXISTS pitchdeck_upload (
+                id SERIAL PRIMARY KEY,
+                file_id VARCHAR(255),
+                file_path TEXT,
+                original_filename TEXT,
+                user_email TEXT,
+                created_at TIMESTAMP,
+                updated_at TIMESTAMP
+            )
+        """))
+
 def create_pitchdeck_section_table():
     with engine.connect() as conn:
         conn.execute(text(f"""
@@ -64,18 +78,6 @@ def create_pitchdeck_section_table():
                 created_at TIMESTAMP,
                 updated_at TIMESTAMP,
                 FOREIGN KEY (content_id) REFERENCES pitchdeck_content(id)
-            )
-        """))
-    with engine.connect() as conn:
-        conn.execute(text(f"""
-            CREATE TABLE IF NOT EXISTS pitchdeck_upload (
-                id SERIAL PRIMARY KEY,
-                file_id VARCHAR(255),
-                file_path TEXT,
-                original_filename TEXT,
-                user_email TEXT,
-                created_at TIMESTAMP,
-                updated_at TIMESTAMP
             )
         """))
 
