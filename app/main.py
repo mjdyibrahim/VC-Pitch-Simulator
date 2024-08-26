@@ -3,6 +3,7 @@ import os
 import json
 import uuid
 from dotenv import load_dotenv
+from urllib.parse import unquote
 from app.file_processor import process_file
 from app.data_extractor import extract_sections, retrieve_sections
 from app.user_prompts import prompt_for_missing_info
@@ -27,7 +28,7 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 # Retrieve database credentials from environment variables
 db_host = os.getenv("SINGLESTORE_HOST")
 db_port = int(os.getenv("SINGLESTORE_PORT"))
-db_user = os.getenv("SINGLESTORE_USER")
+db_user = unquote(os.getenv("SINGLESTORE_USER"))
 db_password = os.getenv("SINGLESTORE_PASSWORD")
 db_name = os.getenv("SINGLESTORE_DATABASE")
 db_url = os.getenv("SINGLESTORE_URL")
