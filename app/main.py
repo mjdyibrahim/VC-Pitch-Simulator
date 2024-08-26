@@ -44,7 +44,7 @@ def create_pitchdeck_upload_table():
         conn.execute(text(f"""
             CREATE TABLE IF NOT EXISTS pitchdeck_upload (
                 id SERIAL PRIMARY KEY,
-                startup_id VARCHAR(255),
+                file_id VARCHAR(255),
                 file_path TEXT,
                 original_filename TEXT,
                 user_email TEXT,
@@ -53,14 +53,14 @@ def create_pitchdeck_upload_table():
             )
         """))
 
-def insert_pitchdeck_upload(startup_id, file_path, original_filename, user_email):
+def insert_pitchdeck_upload(file_id, file_path, original_filename, user_email):
     with engine.connect() as conn:
         result = conn.execute(text(f"""
-            INSERT INTO pitchdeck_upload (startup_id, file_path, original_filename, user_email, created_at, updated_at)
-            VALUES (:startup_id, :file_path, :original_filename, :user_email, :created_at, :updated_at)
+            INSERT INTO pitchdeck_upload (file_id, file_path, original_filename, user_email, created_at, updated_at)
+            VALUES (:file_id, :file_path, :original_filename, :user_email, :created_at, :updated_at)
             RETURNING id
         """), {
-            "startup_id": startup_id,
+            "file_id": file_id,
             "file_path": file_path,
             "original_filename": original_filename,
             "user_email": user_email,
@@ -122,9 +122,11 @@ def main():
         # Insert data into the pitchdeck_upload table and get the file_id
         file_id = insert_pitchdeck_upload(file_id, uploaded_file_path, original_filename, user_email)
 
-        with st.spinner("Processing your pitch deck for completion..."):
-            # Process the file and extract text
+        with st.spinner("Extracting your file content...")
             extracted_content, content_id = process_file(uploaded_file_path, file_id, original_filename, user_email)
+        
+        with st.spinner("Checking your Pitch Deck Sections..."):
+            # Process the file and extract text
 
             # Process the pitch deck and store section data
             extract_sections(uploaded_file_path, file_id, content_id)
