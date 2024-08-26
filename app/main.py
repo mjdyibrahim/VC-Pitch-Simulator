@@ -173,11 +173,11 @@ def main():
         # Display extracted data in two columns
         st.subheader("Extracted Startup Data")
         col1, col2 = st.columns(2)
-        sections = list(extracted_data.keys())
+        sections = list(extracted_sections.keys())
         for i, section in enumerate(sections):
             with col1 if i % 2 == 0 else col2:
                 st.write(f"### {section.capitalize()}")
-                st.json(extracted_data[section])
+                st.json(extracted_sections[section])
 
         # Prompt user to confirm or provide more information
         st.subheader("Additional Information")
@@ -186,14 +186,14 @@ def main():
                 additional_info = st.text_area(f"Additional information for {section.capitalize()}")
                 if additional_info:
                     # Update the extracted data with additional information
-                    extracted_data[section] += "\n" + additional_info
+                    extracted_sections[section] += "\n" + additional_info
 
         # Check completeness and prompt for missing information if necessary
-        if not extracted_data or len(extracted_data) < 5:  # Adjust the condition based on your completeness criteria
+        if not extracted_sections or len(extracted_sections) < 5:  # Adjust the condition based on your completeness criteria
             st.warning("We couldn't find enough information. Our chat assistant wants to ask a few questions.")
-            complete_startup_data = prompt_for_missing_info(extracted_data)
+            complete_startup_data = prompt_for_missing_info(extracted_sections)
         else:
-            complete_startup_data = extracted_data
+            complete_startup_data = extracted_sections
 
         # Calculate startup metrics
         metrics = calculate_metrics(complete_startup_data)
