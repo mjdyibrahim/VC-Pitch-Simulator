@@ -104,21 +104,17 @@ def embed_text(text):
 #             data[row["section_name"]] = row["section_content"]
 #     return data
 
-def call_llm_for_section(text, questions, section_name):
+def call_llm_for_section(text, criteria, section_name):
     prompt_template = f"""
     Provided the following Pitch Deck content: {text}
 
-    Please summarize the {section_name} and provide feedback for it based on the given criteria
-    QUESTIONS:
+    Please summarize the {section_name} and provide feedback for it based on the given criteria:
     
-    {questions}
-    
-    
+    {criteria}
     """
-    questions_str = "\n".join([f"- {question}" for question in questions])
-    prompt = PromptTemplate(template=prompt_template, input_variables=["text", "questions"])
+    prompt = PromptTemplate(template=prompt_template, input_variables=["text", "criteria"])
     chain = LLMChain(llm=granite_llm_ibm, prompt=prompt)
-    response = chain.run({"text": text, "questions": questions_str})
+    response = chain.run({"text": text, "criteria": criteria})
     
     # Return the section name and the extracted information
     return {section_name: response}
@@ -235,8 +231,8 @@ def extract_sections(file_path, startup_id, content_id):
     # create_pitchdeck_section_table()
 
     extracted_sections = {}
-    for section, questions in sections.items():
-        response = call_llm_for_section(text, questions, section)
+    for section, criteria in sections.items():
+        response = call_llm_for_section(text, criteria, section)
         section_text = response[section]
         embedded_text = embed_text(section_text)
         extracted_sections[section] = section_text
