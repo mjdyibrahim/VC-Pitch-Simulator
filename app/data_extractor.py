@@ -2,7 +2,7 @@ from ibm_watsonx_ai.foundation_models import Model
 from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes
 from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
 from ibm_watsonx_ai.credentials import Credentials
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from ibm_watsonx_ai.foundation_models.extensions.langchain import WatsonxLLM
 # from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
@@ -10,7 +10,7 @@ import os
 import fitz  # PyMuPDF
 from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
 from sqlalchemy import create_engine, text
-from langchain.chains import LLMChain
+from langchain_core.runnables import RunnableSequence
 from langchain.prompts import PromptTemplate
 from datetime import datetime
 
@@ -119,8 +119,8 @@ def call_llm_for_section(text, criteria, section_name):
     {{{{criteria}}}}
     """
     prompt = PromptTemplate(template=prompt_template, input_variables=["text", "criteria"])
-    chain = LLMChain(llm=granite_llm_ibm, prompt=prompt)
-    response = chain.run({"text": text, "criteria": criteria})
+    chain = RunnableSequence([prompt, granite_llm_ibm])
+    response = chain.invoke({"text": text, "criteria": criteria})
     
     # Return the section name and the extracted information
     return {section_name: response}
