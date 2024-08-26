@@ -100,7 +100,7 @@ def load_and_store_documents():
         database="vc_simulator",
         documents=documents,
         embedding=embedding_model,
-        table_name="knowledge_base",
+        table_name=table_name,
     )
 
     # Describe the schema and count rows in both tables

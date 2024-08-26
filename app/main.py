@@ -26,14 +26,16 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 # Database connection
 
 # Retrieve database credentials from environment variables
-db_host = os.getenv("SINGLESTORE_HOST")
+db_host = unquote(os.getenv("SINGLESTORE_HOST"))
 db_port = int(os.getenv("SINGLESTORE_PORT"))
 db_user = unquote(os.getenv("SINGLESTORE_USER"))
 db_password = os.getenv("SINGLESTORE_PASSWORD")
-db_name = os.getenv("SINGLESTORE_DATABASE")
+db_name = unquote(os.getenv("SINGLESTORE_DATABASE"))
+
 db_url = os.getenv("SINGLESTORE_URL")
-db_url = os.getenv("SINGLESTORE_URL")
-singlestore_url = (f"singlestoredb://{db_url}")
+db_url = unquote(os.getenv("SINGLESTORE_URL"))
+
+singlestore_url = f"singlestoredb://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
 engine = create_engine(singlestore_url)
 
