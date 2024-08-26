@@ -115,7 +115,9 @@ def call_llm_for_section(text, questions, section_name):
     prompt = PromptTemplate(template=prompt_template, input_variables=["text", "questions"])
     chain = LLMChain(llm=granite_llm_ibm, prompt=prompt)
     response = chain.run({"text": text, "questions": questions_str})
-    return response
+    
+    # Return the section name and the extracted information
+    return {section_name: response}
 
 def extract_sections(file_path, startup_id, content_id):
     text = extract_text_from_pdf(file_path)
