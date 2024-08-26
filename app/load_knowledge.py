@@ -36,7 +36,7 @@ engine = create_engine(singlestore_url)
 with engine.connect() as conn:
     conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {db_name}"))
     conn.execute(text(f"USE {db_name}"))
-    conn.execute(text(f"CREATE TABLE IF NOT EXISTS {table_name} (content TEXT, vector BLOB, metadata JSON)"))
+    conn.execute(text(f"CREATE TABLE IF NOT EXISTS {table_name} (content LONGTEXT, vector BLOB, metadata JSON)"))
     conn.execute(text(f"""
         CREATE TABLE IF NOT EXISTS {startup_profile_table} (
             id SERIAL PRIMARY KEY,
