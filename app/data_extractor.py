@@ -7,7 +7,7 @@ from ibm_watsonx_ai.foundation_models.extensions.langchain import WatsonxLLM
 from dotenv import load_dotenv
 import os
 import fitz  # PyMuPDF
-from langchain_huggingface import HuggingFaceEmbeddings
+from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
 from sqlalchemy import create_engine, text
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
@@ -63,7 +63,8 @@ def extract_text_from_pdf(file_path):
 def embed_text(text):
     return embedding_model.embed_documents([text])
 
-# def create_pitchdeck_section_table():
+def cosine_similarity(vec1, vec2):
+    return sklearn_cosine_similarity([vec1], [vec2])[0][0]
     # with engine.connect() as conn:
     #     conn.execute(text(f"""
     #         CREATE TABLE IF NOT EXISTS {db_name}.pitchdeck_section (
@@ -238,9 +239,12 @@ def extract_sections(file_path, startup_id, content_id):
                 SELECT section_content FROM knowledge_base
                 WHERE section_name = :section_name
             """), {"section_name": section_name})
-            # Assuming you have a function to perform nearest neighbor analysis
-            # This is a placeholder for the actual nearest neighbor function
-            nearest_neighbor_result = perform_nearest_neighbor(embedded_text, result)
+            section_contents = [row['section_content'] for row in result]
+            section_embeddings = [embed_text(content) for content in section_contents]
+            
+            # Perform nearest neighbor analysis using cosine similarity
+            similarities = [cosine_similarity(embedded_text, embedding) for embedding in section_embeddings]
+            nearest_neighbor_result = max(similarities) if similarities else None
             return nearest_neighbor_result
 
     extracted_sections = {}
