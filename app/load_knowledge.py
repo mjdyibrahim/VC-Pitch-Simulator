@@ -71,7 +71,7 @@ def load_and_store_documents():
             try:
                 if file_name.lower().endswith('.pdf'):
                     text = extract_text_from_pdf(file_path)
-                    docs = [{"text": text}]
+                    docs = [{"page_content": text}]
                 else:
                     try:
                         loader = TextLoader(file_path, encoding='utf-8')  # Specify encoding
@@ -79,7 +79,7 @@ def load_and_store_documents():
                     except UnicodeDecodeError:
                         print(f"Error loading {file_path}: UnicodeDecodeError")
                         continue
-                    docs = [{"text": doc} for doc in docs]  # Convert to expected format
+                    docs = [{"page_content": doc} for doc in docs]  # Convert to expected format
                 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
                 texts = text_splitter.split_documents(docs)
                 all_texts.extend(texts)
@@ -91,7 +91,7 @@ def load_and_store_documents():
             documents=all_texts,
             embedding=embedding_model,
             table_name=table_name,
-            metadata=metadata_list
+            metadatas=metadata_list  # Correct the parameter name
     )
 
     # Describe the schema and count rows in both tables
