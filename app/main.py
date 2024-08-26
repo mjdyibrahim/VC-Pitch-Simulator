@@ -11,8 +11,8 @@ from app.startup_metrics import calculate_metrics
 from app.report_generator import generate_report
 from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
 import requests
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
+# from sqlalchemy import create_engine, text
+# from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
 load_dotenv()
@@ -25,78 +25,78 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 # Database connection
 
-# Retrieve database credentials from environment variables
-db_host = unquote(os.getenv("SINGLESTORE_HOST"))
-db_port = int(os.getenv("SINGLESTORE_PORT"))
-db_user = unquote(os.getenv("SINGLESTORE_USER"))
-db_password = os.getenv("SINGLESTORE_PASSWORD")
-db_name = unquote(os.getenv("SINGLESTORE_DATABASE"))
+# # Retrieve database credentials from environment variables
+# db_host = unquote(os.getenv("SINGLESTORE_HOST"))
+# db_port = int(os.getenv("SINGLESTORE_PORT"))
+# db_user = unquote(os.getenv("SINGLESTORE_USER"))
+# db_password = os.getenv("SINGLESTORE_PASSWORD")
+# db_name = unquote(os.getenv("SINGLESTORE_DATABASE"))
 
-db_url = os.getenv("SINGLESTORE_URL")
-db_url = unquote(os.getenv("SINGLESTORE_URL"))
+# db_url = os.getenv("SINGLESTORE_URL")
+# db_url = unquote(os.getenv("SINGLESTORE_URL"))
 
-singlestore_url = f"singlestoredb://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+# singlestore_url = f"singlestoredb://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
-engine = create_engine(singlestore_url)
+# engine = create_engine(singlestore_url)
 
-def create_pitchdeck_content_table():
-    with engine.connect() as conn:
-        conn.execute(text(f"""
-            CREATE TABLE IF NOT EXISTS pitchdeck_content (
-                id SERIAL PRIMARY KEY,
-                upload_id INTEGER,
-                content TEXT,
-                created_at TIMESTAMP,
-                updated_at TIMESTAMP,
-                FOREIGN KEY (upload_id) REFERENCES pitchdeck_upload(id)
-            )
-        """))
+# def create_pitchdeck_content_table():
+#     with engine.connect() as conn:
+#         conn.execute(text(f"""
+#             CREATE TABLE IF NOT EXISTS pitchdeck_content (
+#                 id SERIAL PRIMARY KEY,
+#                 upload_id INTEGER,
+#                 content TEXT,
+#                 created_at TIMESTAMP,
+#                 updated_at TIMESTAMP,
+#                 FOREIGN KEY (upload_id) REFERENCES pitchdeck_upload(id)
+#             )
+#         """))
 
-def create_pitchdeck_upload_table():
-    with engine.connect() as conn:
-        conn.execute(text(f"""
-            CREATE TABLE IF NOT EXISTS pitchdeck_upload (
-                id SERIAL PRIMARY KEY,
-                file_id VARCHAR(255),
-                file_path TEXT,
-                original_filename TEXT,
-                user_email TEXT,
-                created_at TIMESTAMP,
-                updated_at TIMESTAMP
-            )
-        """))
+# def create_pitchdeck_upload_table():
+#     with engine.connect() as conn:
+#         conn.execute(text(f"""
+#             CREATE TABLE IF NOT EXISTS pitchdeck_upload (
+#                 id SERIAL PRIMARY KEY,
+#                 file_id VARCHAR(255),
+#                 file_path TEXT,
+#                 original_filename TEXT,
+#                 user_email TEXT,
+#                 created_at TIMESTAMP,
+#                 updated_at TIMESTAMP
+#             )
+#         """))
 
-def create_pitchdeck_section_table():
-    with engine.connect() as conn:
-        conn.execute(text(f"""
-            CREATE TABLE IF NOT EXISTS pitchdeck_section (
-                id SERIAL PRIMARY KEY,
-                content_id INTEGER,
-                section_name TEXT,
-                raw_text TEXT,
-                embedded_text TEXT,
-                created_at TIMESTAMP,
-                updated_at TIMESTAMP,
-                FOREIGN KEY (content_id) REFERENCES pitchdeck_content(id)
-            )
-        """))
+# def create_pitchdeck_section_table():
+#     with engine.connect() as conn:
+#         conn.execute(text(f"""
+#             CREATE TABLE IF NOT EXISTS pitchdeck_section (
+#                 id SERIAL PRIMARY KEY,
+#                 content_id INTEGER,
+#                 section_name TEXT,
+#                 raw_text TEXT,
+#                 embedded_text TEXT,
+#                 created_at TIMESTAMP,
+#                 updated_at TIMESTAMP,
+#                 FOREIGN KEY (content_id) REFERENCES pitchdeck_content(id)
+#             )
+#         """))
 
-def insert_pitchdeck_upload(file_id, file_path, original_filename, user_email):
-    with engine.connect() as conn:
-        result = conn.execute(text(f"""
-            INSERT INTO pitchdeck_upload (file_id, file_path, original_filename, user_email, created_at, updated_at)
-            VALUES (:file_id, :file_path, :original_filename, :user_email, :created_at, :updated_at)
-            RETURNING id
-        """), {
-            "file_id": file_id,
-            "file_path": file_path,
-            "original_filename": original_filename,
-            "user_email": user_email,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
-        })
-        file_id = result.fetchone()[0]
-    return file_id
+# def insert_pitchdeck_upload(file_id, file_path, original_filename, user_email):
+#     with engine.connect() as conn:
+#         result = conn.execute(text(f"""
+#             INSERT INTO pitchdeck_upload (file_id, file_path, original_filename, user_email, created_at, updated_at)
+#             VALUES (:file_id, :file_path, :original_filename, :user_email, :created_at, :updated_at)
+#             RETURNING id
+#         """), {
+#             "file_id": file_id,
+#             "file_path": file_path,
+#             "original_filename": original_filename,
+#             "user_email": user_email,
+#             "created_at": datetime.utcnow(),
+#             "updated_at": datetime.utcnow()
+#         })
+#         file_id = result.fetchone()[0]
+#     return file_id
 
 def save_metadata(file_id, file_path, original_filename, user_email):
     metadata = {}
@@ -115,8 +115,7 @@ def main():
     st.title("VC Pitch Simulator")
     st.write("Upload your startup pitch deck and get professional VC analysis.")
 
-    # Get user's email
-    user_email = st.text_input("Enter your email")
+
 
     # Display process diagram
     st.subheader("Process Overview")
@@ -127,6 +126,8 @@ def main():
     4. **Send updated info for feedback and analysis by the LLM using the Knowledge Base**
     5. **Prompt user to start a 'VC Session' for detailed analysis and action plan for qualifying for a certain round**
     """)
+    # Get user's email
+    user_email = st.text_input("Enter your email")
 
     uploaded_file = st.file_uploader("Choose your pitch deck file", type=["pdf", "docx", "txt"], key="file_uploader")
 
@@ -144,27 +145,26 @@ def main():
         # Save metadata
         save_metadata(file_id, uploaded_file_path, original_filename, user_email)
 
-        # Create the pitchdeck_upload table if it doesn't exist
-        create_pitchdeck_upload_table()
+        # # Create the pitchdeck_upload table if it doesn't exist
+        # create_pitchdeck_upload_table()
 
-        # Create the pitchdeck_content and pitchdeck_section tables if they don't exist
-        create_pitchdeck_content_table()
-        create_pitchdeck_section_table()
+        # # Create the pitchdeck_content and pitchdeck_section tables if they don't exist
+        # create_pitchdeck_content_table()
+        # create_pitchdeck_section_table()
 
         # Insert data into the pitchdeck_upload table and get the upload_id
-        file_id = insert_pitchdeck_upload(file_id, uploaded_file_path, original_filename, user_email)
+        # file_id = insert_pitchdeck_upload(file_id, uploaded_file_path, original_filename, user_email)
 
         with st.spinner("Extracting your file content..."):
-            extracted_content, content_id = process_file(uploaded_file_path, file_id, original_filename, user_email)
+            extracted_content = process_file(uploaded_file_path, file_id, original_filename, user_email)
         
-        with st.spinner("Checking your Pitch Deck Sections..."):
-            # Process the file and extract text
+        with st.spinner("Extracting your Pitch Deck Sections..."):
+            extracted_sections = retrieve_sections(extracted_content)
 
-            # Process the pitch deck and store section data
-            extract_sections(uploaded_file_path, file_id, content_id)
+            # # Process the pitch deck and store section data
+            # extract_sections(uploaded_file_path, file_id, content_id)
 
-        # Fetch the extracted data from the database
-        extracted_data = retrieve_sections(startup_id=file_id)
+            # Fetch the extracted data from the database
 
         # Display extracted data in two columns
         st.subheader("Extracted Startup Data")
