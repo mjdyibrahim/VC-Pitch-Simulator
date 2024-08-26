@@ -188,6 +188,6 @@ def extract_sections(file_path, startup_id, content_id):
         response = call_llm_for_section(text, questions, section)
         section_text = response[section]
         embedded_text = embed_text(section_text)
-        extracted_sections[section] = response
+        extracted_sections[section] = section_text
         # store_section_data(startup_id, section, response, embedded_text, content_id)
     return extracted_sections
