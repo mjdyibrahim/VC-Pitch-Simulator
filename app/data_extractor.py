@@ -3,7 +3,7 @@ from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes
 from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
 from ibm_watsonx_ai.credentials import Credentials
 from ibm_watsonx_ai.foundation_models.extensions.langchain import WatsonxLLM
-from sqlalchemy import create_engine, text
+# from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import os
 import fitz  # PyMuPDF
@@ -25,7 +25,7 @@ db_url = os.getenv("SINGLESTORE_URL")
 
 singlestore_url = f"singlestoredb://{db_url}"
 
-engine = create_engine(singlestore_url)
+# engine = create_engine(singlestore_url)
 
 # Initialize IBM Watson Assistant (Granite LLM)
 ibm_api_key = os.getenv("IBM_API_KEY")
@@ -61,48 +61,48 @@ def extract_text_from_pdf(file_path):
 def embed_text(text):
     return embedding_model.embed_text(text)
 
-def create_pitchdeck_section_table():
-    with engine.connect() as conn:
-        conn.execute(text(f"""
-            CREATE TABLE IF NOT EXISTS {db_name}.pitchdeck_section (
-                id SERIAL PRIMARY KEY,
-                startup_id VARCHAR(255),
-                section_name VARCHAR(255),
-                section_content TEXT,
-                section_embedding TEXT,
-                content_id INTEGER,
-                created_at TIMESTAMP,
-                updated_at TIMESTAMP,
-                FOREIGN KEY (content_id) REFERENCES {db_name}.pitchdeck_content(id)
-            )
-        """))
+# def create_pitchdeck_section_table():
+    # with engine.connect() as conn:
+    #     conn.execute(text(f"""
+    #         CREATE TABLE IF NOT EXISTS {db_name}.pitchdeck_section (
+    #             id SERIAL PRIMARY KEY,
+    #             startup_id VARCHAR(255),
+    #             section_name VARCHAR(255),
+    #             section_content TEXT,
+    #             section_embedding TEXT,
+    #             content_id INTEGER,
+    #             created_at TIMESTAMP,
+    #             updated_at TIMESTAMP,
+    #             FOREIGN KEY (content_id) REFERENCES {db_name}.pitchdeck_content(id)
+    #         )
+    #     """))
 
-def store_section_data(startup_id, section_name, raw_text, embedded_text, content_id):
-    with engine.connect() as conn:
-        conn.execute(text(f"""
-            INSERT INTO {db_name}.pitchdeck_section (startup_id, section_name, section_content, section_embedding, content_id, created_at, updated_at, content_id)
-            VALUES (:startup_id, :section_name, :section_content, :section_embedding, :content_id, :created_at, :updated_at, :content_id)
-        """), {
-            "startup_id": startup_id,
-            "section_name": section_name,
-            "section_content": raw_text,
-            "section_embedding": embedded_text,
-            "content_id": content_id,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
-            "content_id": content_id
-        })
+# def store_section_data(content_id, section_name, raw_text, embedded_text):
+    # with engine.connect() as conn:
+    #     conn.execute(text(f"""
+    #         INSERT INTO {db_name}.pitchdeck_section (content_id, section_name, section_content, section_embedding, content_id)
+    #         VALUES (:startup_id, :section_name, :section_content, :section_embedding, :content_id, :created_at, :updated_at, :content_id)
+    #     """), {
+    #         "section_name": section_name,
+    #         "section_content": raw_text,
+    #         "section_embedding": embedded_text,
+    #         "content_id": content_id,
+    #         "created_at": datetime.utcnow(),
+    #         "updated_at": datetime.utcnow(),
+    #         "content_id": content_id
+    #     })
+    #     return 
 
-def retrieve_sections(startup_id):
-    with engine.connect() as conn:
-        result = conn.execute(text(f"""
-            SELECT section_name, section_content FROM {db_name}.pitchdeck_section
-            WHERE startup_id = :startup_id
-        """), {"startup_id": startup_id})
-        data = {}
-        for row in result:
-            data[row["section_name"]] = row["section_content"]
-    return data
+# def retrieve_sections(startup_id):
+#     with engine.connect() as conn:
+#         result = conn.execute(text(f"""
+#             SELECT section_name, section_content FROM {db_name}.pitchdeck_section
+#             WHERE startup_id = :startup_id
+#         """), {"startup_id": startup_id})
+#         data = {}
+#         for row in result:
+#             data[row["section_name"]] = row["section_content"]
+#     return data
 
 def call_llm_for_section(text, questions, section_name):
     prompt_template = f"""
@@ -179,9 +179,10 @@ def extract_sections(file_path, startup_id, content_id):
     }
     
     # Create the pitchdeck_section table if it doesn't exist
-    create_pitchdeck_section_table()
+    # create_pitchdeck_section_table()
 
     for section, questions in sections.items():
         response = call_llm_for_section(text, questions, section)
         embedded_text = embed_text(response)
-        store_section_data(startup_id, section, response, embedded_text, content_id)
+        # store_section_data(startup_id, section, response, embedded_text, content_id)
+    return extracted_sections
