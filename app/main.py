@@ -159,7 +159,7 @@ def main():
             extracted_content = process_file(uploaded_file_path, file_id, original_filename, user_email)
             st.success("File content extracted successfully.")
         
-        with st.spinner("Extracting your Pitch Deck Sections..."):
+        with st.spinner("Now, shecking the provided information in your pitch deck..."):
             extracted_sections = extract_sections(uploaded_file_path, file_id, original_filename)
 
             # Display extracted data in two columns

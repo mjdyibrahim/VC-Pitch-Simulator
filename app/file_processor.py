@@ -1,54 +1,54 @@
 import fitz  # PyMuPDF
 import docx
 import os
-from sqlalchemy import create_engine, text
+# from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 from datetime import datetime
 
 load_dotenv()
 
-# Database connection
-db_url = os.getenv("SINGLESTORE_URL")
-singlestore_url = f"singlestoredb://{db_url}"
-engine = create_engine(singlestore_url)
+# # Database connection
+# db_url = os.getenv("SINGLESTORE_URL")
+# singlestore_url = f"singlestoredb://{db_url}"
+# engine = create_engine(singlestore_url)
 
-def create_pitchdeck_content_table():
-    with engine.connect() as conn:
-        conn.execute(text(f"""
-            CREATE TABLE IF NOT EXISTS pitchdeck_content (
-                id SERIAL PRIMARY KEY,
-                startup_id VARCHAR(255),
-                file_id VARCHAR(255),
-                file_path TEXT,
-                original_filename TEXT,
-                user_email TEXT,
-                extracted_content TEXT,
-                created_at TIMESTAMP,
-                updated_at TIMESTAMP,
-                FOREIGN KEY (file_id) REFERENCES pitchdeck_upload(id)
-            )
-        """))
+# def create_pitchdeck_content_table():
+#     with engine.connect() as conn:
+#         conn.execute(text(f"""
+#             CREATE TABLE IF NOT EXISTS pitchdeck_content (
+#                 id SERIAL PRIMARY KEY,
+#                 pitchdeck_id VARCHAR(255),
+#                 file_id VARCHAR(255),
+#                 file_path TEXT,
+#                 original_filename TEXT,
+#                 user_email TEXT,
+#                 extracted_content TEXT,
+#                 created_at TIMESTAMP,
+#                 updated_at TIMESTAMP,
+#                 FOREIGN KEY (file_id) REFERENCES pitchdeck_upload(id)
+#             )
+#         """))
 
-def insert_pitchdeck_content(startup_id, file_id, file_path, original_filename, user_email, extracted_content):
-    with engine.connect() as conn:
-        result = conn.execute(text(f"""
-            INSERT INTO pitchdeck_content (startup_id, file_id, file_path, original_filename, user_email, extracted_content, created_at, updated_at)
-            VALUES (:startup_id, :file_id, :file_path, :original_filename, :user_email, :extracted_content, :created_at, :updated_at)
-            RETURNING id
-        """), {
-            "startup_id": startup_id,
-            "file_id": file_id,
-            "file_path": file_path,
-            "original_filename": original_filename,
-            "user_email": user_email,
-            "extracted_content": extracted_content,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
-        })
-        content_id = result.fetchone()[0]
-    return content_id
+# def insert_pitchdeck_content(file_id, file_path, original_filename, user_email, extracted_content):
+#     with engine.connect() as conn:
+#         result = conn.execute(text(f"""
+#             INSERT INTO pitchdeck_content (pitchdeck_id, file_id, file_path, original_filename, user_email, extracted_content, created_at, updated_at)
+#             VALUES (:pitchdeck_id, :file_id, :file_path, :original_filename, :user_email, :extracted_content, :created_at, :updated_at)
+#             RETURNING id
+#         """), {
+#             "pitchdeck_id": pitchdeck_id,
+#             "file_id": file_id,
+#             "file_path": file_path,
+#             "original_filename": original_filename,
+#             "user_email": user_email,
+#             "extracted_content": extracted_content,
+#             "created_at": datetime.utcnow(),
+#             "updated_at": datetime.utcnow()
+#         })
+#         pitchdeck_id = result.fetchone()[0]
+#     return pitchdeck_id
 
-def process_file(file_path, startup_id, file_id, original_filename, user_email):
+def process_file(file_path, file_id, original_filename, user_email):
     file_extension = os.path.splitext(file_path)[1].lower()
     print(f"Processing file: {file_path}, File extension: {file_extension}")  # Debug statement
     
@@ -62,12 +62,12 @@ def process_file(file_path, startup_id, file_id, original_filename, user_email):
         raise ValueError("Unsupported file type")
 
     # Create the pitchdeck_content table if it doesn't exist
-    create_pitchdeck_content_table()
+    # create_pitchdeck_content_table()
 
     # Insert data into the pitchdeck_content table and get the content_id
-    content_id = insert_pitchdeck_content(startup_id, file_id, file_path, original_filename, user_email, extracted_content)
+    # _id = insert_pitchdeck_content(file_id, file_path, original_filename, user_email, extracted_content)
 
-    return extracted_content, content_id
+    return extracted_content
 
 def extract_text_from_pdf(file_path):
     text = ""
