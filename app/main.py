@@ -39,7 +39,33 @@ singlestore_url = f"singlestoredb://{db_user}:{db_password}@{db_host}:{db_port}/
 
 engine = create_engine(singlestore_url)
 
-def create_pitchdeck_upload_table():
+def create_pitchdeck_content_table():
+    with engine.connect() as conn:
+        conn.execute(text(f"""
+            CREATE TABLE IF NOT EXISTS pitchdeck_content (
+                id SERIAL PRIMARY KEY,
+                upload_id INTEGER,
+                content TEXT,
+                created_at TIMESTAMP,
+                updated_at TIMESTAMP,
+                FOREIGN KEY (upload_id) REFERENCES pitchdeck_upload(id)
+            )
+        """))
+
+def create_pitchdeck_section_table():
+    with engine.connect() as conn:
+        conn.execute(text(f"""
+            CREATE TABLE IF NOT EXISTS pitchdeck_section (
+                id SERIAL PRIMARY KEY,
+                content_id INTEGER,
+                section_name TEXT,
+                raw_text TEXT,
+                embedded_text TEXT,
+                created_at TIMESTAMP,
+                updated_at TIMESTAMP,
+                FOREIGN KEY (content_id) REFERENCES pitchdeck_content(id)
+            )
+        """))
     with engine.connect() as conn:
         conn.execute(text(f"""
             CREATE TABLE IF NOT EXISTS pitchdeck_upload (
@@ -119,7 +145,11 @@ def main():
         # Create the pitchdeck_upload table if it doesn't exist
         create_pitchdeck_upload_table()
 
-        # Insert data into the pitchdeck_upload table and get the file_id
+        # Create the pitchdeck_content and pitchdeck_section tables if they don't exist
+        create_pitchdeck_content_table()
+        create_pitchdeck_section_table()
+
+        # Insert data into the pitchdeck_upload table and get the upload_id
         file_id = insert_pitchdeck_upload(file_id, uploaded_file_path, original_filename, user_email)
 
         with st.spinner("Extracting your file content...")
