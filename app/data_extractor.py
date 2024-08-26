@@ -238,11 +238,8 @@ def extract_sections(extracted_text, startup_id, content_id):
     def nearest_neighbor_analysis(embedded_text, section_name):
         with knowledge_base_engine.connect() as conn:
             conn.execute(text("USE vc_simulator"))
-            result = conn.execute(text(f"""
-                SELECT content FROM knowledge_base
-                WHERE section_name = :section_name
-            """), {"section_name": section_name})
-            section_contents = [row['section_content'] for row in result]
+            result = conn.execute(text("SELECT content FROM knowledge_base"))
+            section_contents = [row['content'] for row in result]
             section_embeddings = [embed_text(content) for content in section_contents]
             
             # Perform nearest neighbor analysis using cosine similarity
