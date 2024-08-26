@@ -152,7 +152,7 @@ def main():
         # Insert data into the pitchdeck_upload table and get the upload_id
         file_id = insert_pitchdeck_upload(file_id, uploaded_file_path, original_filename, user_email)
 
-        with st.spinner("Extracting your file content...")
+        with st.spinner("Extracting your file content..."):
             extracted_content, content_id = process_file(uploaded_file_path, file_id, original_filename, user_email)
         
         with st.spinner("Checking your Pitch Deck Sections..."):
