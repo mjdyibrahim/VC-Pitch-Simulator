@@ -106,10 +106,14 @@ def embed_text(text):
 
 def call_llm_for_section(text, questions, section_name):
     prompt_template = f"""
-    Text: {{text}}
+    Provided the following Pitch Deck content: {text}
 
-    Questions for {section_name}:
-    {{questions}}
+    Please summarize the {section_name} and provide feedback for it based on the given criteria
+    QUESTIONS:
+    
+    {questions}
+    
+    
     """
     questions_str = "\n".join([f"- {question}" for question in questions])
     prompt = PromptTemplate(template=prompt_template, input_variables=["text", "questions"])
@@ -123,60 +127,107 @@ def extract_sections(file_path, startup_id, content_id):
     text = extract_text_from_pdf(file_path)
     
     sections = {
-        "team": [
-            "How many team members do you have?",
-            "List the team members with the following details:",
-            "What is the team member's name?",
-            "What is the team member's title?",
-            "How many hours per week is the team member available?",
-            "Since when has the team member been involved?",
-            "What percentage of equity does the team member hold?",
-            "What percentage of salary does the team member receive?",
-            "How many years of experience does the team member have?",
-            "Does the team member have an undergraduate degree?",
-            "Does the team member have a graduate degree?",
-            "Does the team member have a master's degree?",
-            "Does the team member have a PhD or higher degree?",
-            "Has the team member been part of a startup team?",
-            "Has the team member been the founder of a startup?",
-            "Has the team member held a previous C-level position?",
-            "Has the team member been part of a successful exit?",
-            "Is the team member's role in Marketing?",
-            "Is the team member's role in Sales?",
-            "Is the team member's role in Product?",
-            "Is the team member's role in Creative?",
-            "Is the team member's role in Technical?",
-            "Is the team member's role in Operation?",
-            "What other role does the team member have?",
-            "Can you provide an overview of the team's qualifications and expertise?",
-            "How would you assess the team's experience and ability to execute the business plan?"
-        ],
+        "team" : [
+            """
+     Analyze provided content and score the strength of the team section only from 1-10 based on available information and provide feedback on possible improvements.
+
+    Optimal conditions for the team include:
+    - 2-3 cofounders, with near equal equity
+    - Specialized academic degrees and/or expertise in their areas
+    - Half-time or more commitment to the startup
+    - Previous startup experience and successful exits
+    - Team working together for a significant period
+    - Presence of mentors with substantial experience
+
+        Example of team_feedback output format:
+
+        "team_feedback": {
+        "feedback_1": "The team has strong experience and a clear vision, but they need more diversity in skills.",
+        "feedback_2": "The team's track record is impressive, but they lack experience in scaling businesses.",
+        "feedback_3": "There is a strong leadership team, but more emphasis on technical skills is needed.",
+        "feedback_4": "The team has a clear vision but needs better execution plans.",
+        "feedback_5": "The team should work on improving communication strategies within the group."
+
+    """],
         "fundraising": [
-            "What is the current stage of fundraising?",
-            "What is the target amount of funding?",
-            "What is the current amount of funding?",
-            "What is the minimum amount of funding?",
-            "What is the maximum amount of funding?"
+                    """
+                        Analyze provided content and score the strength of the fundraising section only from 1-10 based on available information and provide feedback on possible improvements.
+                        Optimal conditions for fundraising include:
+                        - A clear and feasible plan for raising funds in the next 12-18 months
+                        - Secured initial funding or demonstrated progress in fundraising
+                        - Identified potential sources of funding such as venture capital, angel investors, or grants
+                        - Detailed and realistic financial projection
+                        - A strong pitch deck and business plan that have been refined and tested with investors
+
+                        Example of fundraising_feedback output format:
+
+                        "fundraising_feedback": {
+                        "score": 7,
+                        "feedback_1": "The startup has secured initial funding but needs to outline a clearer path for future rounds.",
+                        "feedback_2": "Funding sources are diversified, but there is a need for more detailed financial projections.",
+                        "feedback_3": "The pitch to investors is strong but needs better risk management strategies.",
+                        "feedback_4": "Current funding is sufficient for initial growth but not for scaling.",
+                        "feedback_5": "Consider exploring alternative funding options like grants or strategic partnerships."
+                        }
+
+                        """
         ],
         "market": [
-            "What is the primary industry?",
-            "What is the market size?",
-            "What is the market share in 3 years?"
+
+    """
+    Score the strength of the market section from 1-10 based on available information and provide feedback on any possible improvements.
+    Optimal conditions for the market include:
+    - Clear understanding of the market size and growth potential
+    - Defined target market and a plan to capture a significant market share
+    - Detailed information on market dynamics, customer needs, and competitive landscape
+    - Evidence of market validation, such as customer interviews or pilot studies
+    - Strategy for market entry and scaling
+
+    """
+
+
+
         ],
         "business_model": [
-            "What is the primary industry?",
-            "What is the market size?",
-            "What is the market share in 3 years?"
+
+    """
+    Score the strength of the business model section from 1-10 based on available information and provide feedback on possible improvements.
+    Optimal conditions for the business model include:
+    - Clear revenue model showing how the business will make money
+    - Identified who will pay for the service and a strategy for acquiring customers
+    - Defined pricing strategy and detailed plan for scaling revenue
+    - Identified and planned for key metrics like customer acquisition cost and lifetime value
+    - Validated business model with proof of concept or early traction
+
+    """
+
         ],
         "product": [
-            "What is the product?",
-            "What is the product's unique selling proposition?",
-            "What is the product's competitive advantage?"
+    """
+    Score the strength of the product section from 1-10 based on available information and provide feedback on possible improvements.
+    Optimal conditions for the product include:
+    - Product is functional and has been tested with users
+    - Clear roadmap for product development and future features
+    - Feedback from prospective customers indicating strong interest
+    - Validated product-market fit or evidence of traction
+    - Product solves a significant problem and has unique value propositions
+    
+    """
+
         ],
         "traction": [
-            "What is the traction?",
-            "What is the traction's unique selling proposition?",
-            "What is the traction's competitive advantage?"
+    """
+    Score the strength of the traction section from 1-10 based on available information and provide feedback on possible improvements.
+    Optimal conditions for traction include:
+    - Demonstrated early sales and revenue growth
+    - Clear track record of customer acquisition and retention
+    - Metrics and KPIs showing growth and market validation
+    - Testimonials or case studies from early customers
+    - Clear evidence of traction, such as user growth or partnership agreements
+
+
+    """
+
         ]
     }
     
@@ -191,3 +242,11 @@ def extract_sections(file_path, startup_id, content_id):
         extracted_sections[section] = section_text
         # store_section_data(startup_id, section, response, embedded_text, content_id)
     return extracted_sections
+
+
+
+
+
+
+
+
