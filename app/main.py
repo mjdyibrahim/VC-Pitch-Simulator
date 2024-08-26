@@ -23,6 +23,7 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 # Database connection
 db_url = os.getenv("SINGLESTORE_URL")
+print(f"Database URL: {db_url}")  # Debug print to check the database URL
 singlestore_url = f"singlestoredb://{db_url}"
 engine = create_engine(singlestore_url)
 
