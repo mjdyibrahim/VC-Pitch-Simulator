@@ -59,7 +59,7 @@ def extract_text_from_pdf(file_path):
     return text
 
 def embed_text(text):
-    return embedding_model.embed_text(text)
+    return embedding_model.embed_documents([text])
 
 # def create_pitchdeck_section_table():
     # with engine.connect() as conn:
