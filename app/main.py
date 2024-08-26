@@ -170,24 +170,6 @@ def main():
                     st.write(f"### {section.capitalize()}")
                     st.json(extracted_sections[section])
 
-        # Display extracted data in two columns
-        st.subheader("Extracted Startup Data")
-        col1, col2 = st.columns(2)
-        sections = list(extracted_sections.keys())
-        for i, section in enumerate(sections):
-            with col1 if i % 2 == 0 else col2:
-                st.write(f"### {section.capitalize()}")
-                st.json(extracted_sections[section])
-
-        # Prompt user to confirm or provide more information
-        st.subheader("Additional Information")
-        for section in sections:
-            with st.expander(f"Provide more information for {section.capitalize()}"):
-                additional_info = st.text_area(f"Additional information for {section.capitalize()}")
-                if additional_info:
-                    # Update the extracted data with additional information
-                    extracted_sections[section] += "\n" + additional_info
-
         # Check completeness and prompt for missing information if necessary
         if not extracted_sections or len(extracted_sections) < 5:  # Adjust the condition based on your completeness criteria
             st.warning("We couldn't find enough information. Our chat assistant wants to ask a few questions.")
