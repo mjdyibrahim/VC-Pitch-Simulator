@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 import fitz  # PyMuPDF
 from langchain_huggingface import HuggingFaceEmbeddings
+from sqlalchemy import create_engine, text
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from datetime import datetime
@@ -25,7 +26,8 @@ db_url = os.getenv("SINGLESTORE_URL")
 
 singlestore_url = f"singlestoredb://{db_url}"
 
-# engine = create_engine(singlestore_url)
+knowledge_base_url = os.getenv("KNOWLEDGE_BASE_URL")
+knowledge_base_engine = create_engine(knowledge_base_url)
 
 # Initialize IBM Watson Assistant (Granite LLM)
 ibm_api_key = os.getenv("IBM_API_KEY")
@@ -230,13 +232,29 @@ def extract_sections(file_path, startup_id, content_id):
     # Create the pitchdeck_section table if it doesn't exist
     # create_pitchdeck_section_table()
 
+    def nearest_neighbor_analysis(embedded_text, section_name):
+        with knowledge_base_engine.connect() as conn:
+            result = conn.execute(text(f"""
+                SELECT section_content FROM knowledge_base
+                WHERE section_name = :section_name
+            """), {"section_name": section_name})
+            # Assuming you have a function to perform nearest neighbor analysis
+            # This is a placeholder for the actual nearest neighbor function
+            nearest_neighbor_result = perform_nearest_neighbor(embedded_text, result)
+            return nearest_neighbor_result
+
     extracted_sections = {}
     for section, criteria in sections.items():
         response = call_llm_for_section(text, criteria, section)
         section_text = response[section]
         embedded_text = embed_text(section_text)
         extracted_sections[section] = section_text
+        nearest_neighbor_result = nearest_neighbor_analysis(embedded_text, section)
         # store_section_data(startup_id, section, response, embedded_text, content_id)
+        extracted_sections[section] = {
+            "section_text": section_text,
+            "nearest_neighbor": nearest_neighbor_result
+        }
     return extracted_sections
 
 
