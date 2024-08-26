@@ -6,6 +6,8 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.vectorstores import SingleStoreDB
+from langchain.docstore.document import Document
+
 import fitz  # PyMuPDF
 
 # Load environment variables from .env file
@@ -30,11 +32,13 @@ singlestore_url = f"singlestoredb://{db_url}"
 
 engine = create_engine(singlestore_url)
 
+# Ensure the database is selected before any operation
 with engine.connect() as conn:
-    db_response = conn.execute(text("CREATE DATABASE IF NOT EXISTS " + db_name))
-    table_response = conn.execute(text("CREATE TABLE IF NOT EXISTS " + db_name + "." + table_name + " (vector BLOB, metadata JSON)"))
-    profile_table_response = conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS """ + db_name + "." + startup_profile_table + """ (
+    conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {db_name}"))
+    conn.execute(text(f"USE {db_name}"))
+    conn.execute(text(f"CREATE TABLE IF NOT EXISTS {table_name} (content TEXT, vector BLOB, metadata JSON)"))
+    conn.execute(text(f"""
+        CREATE TABLE IF NOT EXISTS {startup_profile_table} (
             id SERIAL PRIMARY KEY,
             startup_id VARCHAR(255) NOT NULL,
             section VARCHAR(255) NOT NULL,
@@ -42,18 +46,16 @@ with engine.connect() as conn:
             embedded_text BLOB
         )
     """))
-    print(db_response)
-    print(table_response)
-    print(profile_table_response)
-    
+    print("Database and tables created/verified.")
+
 print("Available databases:")
 with engine.connect() as conn:
     result = conn.execute(text("SHOW DATABASES"))
     for row in result:
         print(row)
-        
+
 # Connection string to use Langchain with SingleStoreDB
-os.environ["SINGLESTOREDB_URL"] = f"{db_url}"
+os.environ["SINGLESTOREDB_URL"] = singlestore_url
 
 def extract_text_from_pdf(file_path):
     text = ""
@@ -71,46 +73,52 @@ def load_and_store_documents():
             try:
                 if file_name.lower().endswith('.pdf'):
                     text = extract_text_from_pdf(file_path)
-                    docs = [{"page_content": text}]
                 else:
                     try:
                         loader = TextLoader(file_path, encoding='utf-8')  # Specify encoding
                         docs = loader.load()
+                        text = docs[0].page_content  # Assuming single document per file
                     except UnicodeDecodeError:
                         print(f"Error loading {file_path}: UnicodeDecodeError")
                         continue
-                    docs = [{"page_content": doc} for doc in docs]  # Convert to expected format
+                
+                # Split the text into chunks
                 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-                texts = text_splitter.split_documents(docs)
-                all_texts.extend(texts)
-                metadata_list.extend([{"file_name": file_name}] * len(texts))
+                chunks = text_splitter.split_text(text)
+                all_texts.extend(chunks)
+                metadata_list.extend([{"file_name": file_name}] * len(chunks))
+
             except Exception as e:
                 print(f"Error loading {file_path}: {e}")
     
+    # Convert all_texts to Document format
+    documents = [Document(page_content=text, metadata=metadata) for text, metadata in zip(all_texts, metadata_list)]
+
+    # Store the documents in SingleStoreDB
     vectorstore = SingleStoreDB.from_documents(
-            documents=all_texts,
-            embedding=embedding_model,
-            table_name=table_name,
-            metadatas=metadata_list  # Correct the parameter name
+        database="vc_simulator",
+        documents=documents,
+        embedding=embedding_model,
+        table_name="knowledge_base",
     )
 
     # Describe the schema and count rows in both tables
     with engine.connect() as conn:
-        result = conn.execute(text("DESCRIBE " + db_name + "." + table_name))
-        print(db_name + "." + table_name + " table schema:")
+        result = conn.execute(text(f"DESCRIBE {table_name}"))
+        print(f"{table_name} table schema:")
         for row in result:
             print(row)
 
-        result = conn.execute(text("SELECT COUNT(vector) FROM " + db_name + "." + table_name))
-        print("\nNumber of rows in " + db_name + "." + table_name + ": " + str(result.first()[0]))
+        result = conn.execute(text(f"SELECT COUNT(*) FROM {table_name}"))
+        print(f"\nNumber of rows in {table_name}: {str(result.first()[0])}")
 
-        result = conn.execute(text("DESCRIBE " + db_name + "." + startup_profile_table))
-        print(db_name + "." + startup_profile_table + " table schema:")
+        result = conn.execute(text(f"DESCRIBE {startup_profile_table}"))
+        print(f"{startup_profile_table} table schema:")
         for row in result:
             print(row)
 
-        result = conn.execute(text("SELECT COUNT(id) FROM " + db_name + "." + startup_profile_table))
-        print("\nNumber of rows in " + db_name + "." + startup_profile_table + ": " + str(result.first()[0]))
+        result = conn.execute(text(f"SELECT COUNT(*) FROM {startup_profile_table}"))
+        print(f"\nNumber of rows in {startup_profile_table}: {str(result.first()[0])}")
 
 if __name__ == "__main__":
     load_and_store_documents()
