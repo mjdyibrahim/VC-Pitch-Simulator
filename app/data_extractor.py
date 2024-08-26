@@ -27,10 +27,10 @@ db_url = os.getenv("SINGLESTORE_URL")
 
 singlestore_url = f"singlestoredb://{db_url}"
 
-knowledge_base_url = os.getenv("KNOWLEDGE_BASE_URL")
-if not knowledge_base_url:
-    raise ValueError("KNOWLEDGE_BASE_URL environment variable is not set.")
-knowledge_base_engine = create_engine(knowledge_base_url)
+# Connection string to use Langchain with SingleStoreDB
+os.environ["SINGLESTOREDB_URL"] = singlestore_url
+
+knowledge_base_engine = create_engine(singlestore_url)
 
 # Initialize IBM Watson Assistant (Granite LLM)
 ibm_api_key = os.getenv("IBM_API_KEY")
