@@ -157,6 +157,7 @@ def main():
 
         with st.spinner("Extracting your file content..."):
             extracted_content = process_file(uploaded_file_path, file_id, original_filename, user_email)
+            st.success("File content extracted successfully.")
         
         with st.spinner("Extracting your Pitch Deck Sections..."):
             extracted_sections = extract_sections(uploaded_file_path, file_id, original_filename)
@@ -168,7 +169,7 @@ def main():
             for i, section in enumerate(sections):
                 with col1 if i % 2 == 0 else col2:
                     st.write(f"### {section.capitalize()}")
-                    st.json(extracted_sections[section])
+                    st.text(extracted_sections[section])
 
         # Check completeness and prompt for missing information if necessary
         if not extracted_sections or len(extracted_sections) < 5:  # Adjust the condition based on your completeness criteria
