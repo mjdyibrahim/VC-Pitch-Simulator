@@ -121,7 +121,7 @@ def call_llm_for_section(text, criteria, section_name):
     {{{{criteria}}}}
     """
     prompt = PromptTemplate(template=prompt_template, input_variables=["text", "criteria"])
-    chain = RunnableSequence([prompt, granite_llm_ibm])
+    chain = RunnableSequence(prompt, granite_llm_ibm)
     response = chain.invoke({"text": text, "criteria": criteria})
     
     # Return the section name and the extracted information
