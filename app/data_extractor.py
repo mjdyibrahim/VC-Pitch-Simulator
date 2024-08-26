@@ -64,7 +64,9 @@ def extract_text_from_pdf(file_path):
     return text
 
 def embed_text(text):
-    return embedding_model.embed_documents([text])
+    # Ensure the embedding is a 1D vector
+    embedded = embedding_model.embed_documents([text])
+    return embedded[0] if isinstance(embedded, list) and len(embedded) == 1 else embedded
 
 def cosine_similarity(vec1, vec2):
     return sklearn_cosine_similarity([vec1], [vec2])[0][0]
