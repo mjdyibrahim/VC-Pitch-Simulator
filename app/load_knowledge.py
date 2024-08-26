@@ -71,7 +71,7 @@ def load_and_store_documents():
             try:
                 if file_name.lower().endswith('.pdf'):
                     text = extract_text_from_pdf(file_path)
-                    docs = [{"page_content": text}]
+                    docs = [{"text": text}]
                 else:
                     try:
                         loader = TextLoader(file_path, encoding='utf-8')  # Specify encoding
@@ -79,7 +79,7 @@ def load_and_store_documents():
                     except UnicodeDecodeError:
                         print(f"Error loading {file_path}: UnicodeDecodeError")
                         continue
-                    docs = [{"page_content": doc["text"]} for doc in docs]  # Convert to expected format
+                    docs = [{"text": doc} for doc in docs]  # Convert to expected format
                 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
                 texts = text_splitter.split_documents(docs)
                 all_texts.extend(texts)
