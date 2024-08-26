@@ -159,12 +159,16 @@ def main():
             extracted_content = process_file(uploaded_file_path, file_id, original_filename, user_email)
         
         with st.spinner("Extracting your Pitch Deck Sections..."):
-            extracted_sections = retrieve_sections(extracted_content)
+            extracted_sections = extract_sections(uploaded_file_path, file_id, original_filename)
 
-            # # Process the pitch deck and store section data
-            # extract_sections(uploaded_file_path, file_id, content_id)
-
-            # Fetch the extracted data from the database
+            # Display extracted data in two columns
+            st.subheader("Extracted Startup Data")
+            col1, col2 = st.columns(2)
+            sections = list(extracted_sections.keys())
+            for i, section in enumerate(sections):
+                with col1 if i % 2 == 0 else col2:
+                    st.write(f"### {section.capitalize()}")
+                    st.json(extracted_sections[section])
 
         # Display extracted data in two columns
         st.subheader("Extracted Startup Data")
