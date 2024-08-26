@@ -5,7 +5,7 @@ import uuid
 from dotenv import load_dotenv
 from urllib.parse import unquote
 from app.file_processor import process_file
-from app.data_extractor import extract_sections, retrieve_sections
+from app.data_extractor import extract_sections
 from app.user_prompts import prompt_for_missing_info
 from app.startup_metrics import calculate_metrics
 from app.report_generator import generate_report
