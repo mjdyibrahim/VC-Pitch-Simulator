@@ -125,8 +125,7 @@ def call_llm_for_section(text, criteria, section_name):
     # Return the section name and the extracted information
     return {section_name: response}
 
-def extract_sections(file_path, startup_id, content_id):
-    extracted_text = extract_text_from_pdf(file_path)
+def extract_sections(extracted_text, startup_id, content_id):
     
     sections = {
         "team" : [
