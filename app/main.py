@@ -18,7 +18,7 @@ from datetime import datetime
 load_dotenv()
 
 UPLOADS_DIR = "uploads"
-METADATA_FILE = "uploads_metadata.json"
+METADATA_FILE = "uploads/uploads_metadata.json"
 
 # Ensure the uploads directory exists
 os.makedirs(UPLOADS_DIR, exist_ok=True)
