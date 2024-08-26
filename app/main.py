@@ -11,6 +11,7 @@ from app.report_generator import generate_report
 from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
 import requests
 from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
 load_dotenv()
@@ -22,9 +23,17 @@ METADATA_FILE = "uploads_metadata.json"
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 # Database connection
+
+# Retrieve database credentials from environment variables
+db_host = os.getenv("SINGLESTORE_HOST")
+db_port = int(os.getenv("SINGLESTORE_PORT"))
+db_user = os.getenv("SINGLESTORE_USER")
+db_password = os.getenv("SINGLESTORE_PASSWORD")
+db_name = os.getenv("SINGLESTORE_DATABASE")
 db_url = os.getenv("SINGLESTORE_URL")
-print(f"Database URL: {db_url}")  # Debug print to check the database URL
-singlestore_url = f"singlestoredb://{db_url}"
+db_url = os.getenv("SINGLESTORE_URL")
+singlestore_url = (f"singlestoredb://{db_url}")
+
 engine = create_engine(singlestore_url)
 
 def create_pitchdeck_upload_table():
