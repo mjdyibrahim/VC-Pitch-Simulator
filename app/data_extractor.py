@@ -112,11 +112,11 @@ def cosine_similarity(vec1, vec2):
 
 def call_llm_for_section(text, criteria, section_name):
     prompt_template = f"""
-    Provided the following Pitch Deck content: {text}
+    Provided the following Pitch Deck content: {{{{text}}}}
 
-    Please summarize the {section_name} and provide feedback for it based on the given criteria:
+    Please summarize the {{{{section_name}}}} and provide feedback for it based on the given criteria:
     
-    {criteria}
+    {{{{criteria}}}}
     """
     prompt = PromptTemplate(template=prompt_template, input_variables=["text", "criteria"])
     chain = LLMChain(llm=granite_llm_ibm, prompt=prompt)
