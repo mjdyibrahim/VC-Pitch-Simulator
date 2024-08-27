@@ -6,11 +6,13 @@ from dotenv import load_dotenv
 from urllib.parse import unquote
 from app.file_processor import process_file
 from app.data_extractor import extract_sections
-from app.user_prompts import prompt_for_missing_info
-from app.startup_metrics import calculate_metrics
-from app.report_generator import generate_report
+
+# from app.user_prompts import prompt_for_missing_info
+# from app.startup_metrics import calculate_metrics
+# from app.report_generator import generate_report
 from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
 import requests
+
 # from sqlalchemy import create_engine, text
 # from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -18,7 +20,7 @@ from datetime import datetime
 load_dotenv()
 
 UPLOADS_DIR = "uploads"
-METADATA_FILE = "uploads_metadata.json"
+METADATA_FILE = "uploads/metadata.json"
 
 # Ensure the uploads directory exists
 os.makedirs(UPLOADS_DIR, exist_ok=True)
@@ -98,41 +100,42 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 #         file_id = result.fetchone()[0]
 #     return file_id
 
+
 def save_metadata(file_id, file_path, original_filename, user_email):
     metadata = {}
     if os.path.exists(METADATA_FILE):
-        with open(METADATA_FILE, 'r') as f:
+        with open(METADATA_FILE, "r") as f:
             metadata = json.load(f)
     metadata[file_id] = {
         "file_path": file_path,
         "original_filename": original_filename,
-        "user_email": user_email
+        "user_email": user_email,
     }
-    with open(METADATA_FILE, 'w') as f:
+    with open(METADATA_FILE, "w") as f:
         json.dump(metadata, f, indent=4)
+
 
 def main():
     st.title("VC Pitch Simulator")
     st.write("Upload your startup pitch deck and get professional VC analysis.")
 
-if __name__ == "__main__":
-    main()
-
-
-
     # Display process diagram
     st.subheader("Process Overview")
-    st.markdown("""
+    st.markdown(
+        """
     1. **Upload your pitch deck file**
     2. **File is processed and broken down into sections: Team, Fundraising, Market, Product, Business Model, Traction, and Other**
     3. **Check the level of completion of information and prompt for missing info if necessary**
     4. **Send updated info for feedback and analysis by the LLM using the Knowledge Base**
     5. **Prompt user to start a 'VC Session' for detailed analysis and action plan for qualifying for a certain round**
-    """)
+    """
+    )
     # Get user's email
     user_email = st.text_input("Enter your email")
 
-    uploaded_file = st.file_uploader("Choose your pitch deck file", type=["pdf", "docx", "txt"], key="file_uploader")
+    uploaded_file = st.file_uploader(
+        "Choose your pitch deck file", type=["pdf", "docx", "txt"], key="file_uploader"
+    )
 
     if uploaded_file is not None and user_email:
         # Generate a unique ID for the uploaded file
@@ -159,11 +162,15 @@ if __name__ == "__main__":
         # file_id = insert_pitchdeck_upload(file_id, uploaded_file_path, original_filename, user_email)
 
         with st.spinner("Extracting your file content..."):
-            extracted_content = process_file(uploaded_file_path, file_id, original_filename, user_email)
+            extracted_content = process_file(
+                uploaded_file_path, file_id, original_filename, user_email
+            )
             st.success("File content extracted successfully.")
-        
+
         with st.spinner("Now, shecking the provided information in your pitch deck..."):
-            extracted_sections = extract_sections(uploaded_file_path, file_id, original_filename)
+            extracted_sections = extract_sections(
+                uploaded_file_path, file_id, original_filename
+            )
 
             # Display extracted data in two columns
             st.subheader("Extracted Startup Data")
@@ -175,8 +182,12 @@ if __name__ == "__main__":
                     st.text(extracted_sections[section])
 
         # Check completeness and prompt for missing information if necessary
-        if not extracted_sections or len(extracted_sections) < 5:  # Adjust the condition based on your completeness criteria
-            st.warning("We couldn't find enough information. Our chat assistant wants to ask a few questions.")
+        if (
+            not extracted_sections or len(extracted_sections) < 5
+        ):  # Adjust the condition based on your completeness criteria
+            st.warning(
+                "We couldn't find enough information. Our chat assistant wants to ask a few questions."
+            )
             complete_startup_data = prompt_for_missing_info(extracted_sections)
         else:
             complete_startup_data = extracted_sections
@@ -193,6 +204,7 @@ if __name__ == "__main__":
         if st.button("Start VC Session"):
             st.write("Starting VC Session...")
             # Add logic for VC Session here
+
 
 if __name__ == "__main__":
     main()

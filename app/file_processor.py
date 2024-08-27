@@ -1,6 +1,7 @@
 import fitz  # PyMuPDF
 import docx
 import os
+
 # from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 from datetime import datetime
@@ -48,15 +49,18 @@ load_dotenv()
 #         pitchdeck_id = result.fetchone()[0]
 #     return pitchdeck_id
 
+
 def process_file(file_path, file_id, original_filename, user_email):
     file_extension = os.path.splitext(file_path)[1].lower()
-    print(f"Processing file: {file_path}, File extension: {file_extension}")  # Debug statement
-    
-    if file_extension == '.pdf':
+    print(
+        f"Processing file: {file_path}, File extension: {file_extension}"
+    )  # Debug statement
+
+    if file_extension == ".pdf":
         extracted_content = extract_text_from_pdf(file_path)
-    elif file_extension == '.docx':
+    elif file_extension == ".docx":
         extracted_content = extract_text_from_docx(file_path)
-    elif file_extension == '.txt':
+    elif file_extension == ".txt":
         extracted_content = extract_text_from_txt(file_path)
     else:
         raise ValueError("Unsupported file type")
@@ -69,6 +73,7 @@ def process_file(file_path, file_id, original_filename, user_email):
 
     return extracted_content
 
+
 def extract_text_from_pdf(file_path):
     text = ""
     with fitz.open(file_path) as doc:
@@ -76,12 +81,14 @@ def extract_text_from_pdf(file_path):
             text += page.get_text()
     return text
 
+
 def extract_text_from_docx(file_path):
     doc = docx.Document(file_path)
     text = "\n".join([para.text for para in doc.paragraphs])
     return text
 
+
 def extract_text_from_txt(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
+    with open(file_path, "r", encoding="utf-8") as file:
         text = file.read()
     return text
