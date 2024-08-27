@@ -115,6 +115,9 @@ def main():
     st.title("VC Pitch Simulator")
     st.write("Upload your startup pitch deck and get professional VC analysis.")
 
+if __name__ == "__main__":
+    main()
+
 
 
     # Display process diagram
