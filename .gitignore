@@ -3,3 +3,4 @@ project_description.txt
 watson.env
 .env
 /venv
+/uploads/*
