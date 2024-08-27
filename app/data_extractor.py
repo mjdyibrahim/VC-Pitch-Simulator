@@ -37,6 +37,10 @@ ibm_api_key = os.getenv("IBM_API_KEY")
 ibm_project_id = os.getenv("PROJECT_ID")
 ibm_cloud_url = os.getenv("IBM_CLOUD_URL")
 
+print(f"IBM API Key: {ibm_api_key}")
+print(f"IBM Project ID: {ibm_project_id}")
+print(f"IBM Cloud URL: {ibm_cloud_url}")
+
 if not ibm_api_key or not ibm_project_id or not ibm_cloud_url:
     raise ValueError("IBM Watson credentials are not set properly in the environment variables.")
 
