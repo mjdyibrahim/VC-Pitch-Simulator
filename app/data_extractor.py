@@ -37,6 +37,9 @@ ibm_api_key = os.getenv("IBM_API_KEY")
 ibm_project_id = os.getenv("PROJECT_ID")
 ibm_cloud_url = os.getenv("IBM_CLOUD_URL")
 
+if not ibm_api_key or not ibm_project_id or not ibm_cloud_url:
+    raise ValueError("IBM Watson credentials are not set properly in the environment variables.")
+
 model = Model(
     model_id=ModelTypes.GRANITE_13B_CHAT_V2,
     params={
