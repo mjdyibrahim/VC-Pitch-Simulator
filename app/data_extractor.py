@@ -4,6 +4,7 @@ from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
 from ibm_watsonx_ai.credentials import Credentials
 from langchain_huggingface import HuggingFaceEmbeddings
 from ibm_watsonx_ai.foundation_models.extensions.langchain import WatsonxLLM
+
 # from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import os
@@ -37,13 +38,22 @@ ibm_api_key = os.getenv("IBM_API_KEY")
 ibm_project_id = os.getenv("PROJECT_ID")
 ibm_cloud_url = os.getenv("IBM_CLOUD_URL")
 
+print(f"IBM API Key: {ibm_api_key}")
+print(f"IBM Project ID: {ibm_project_id}")
+print(f"IBM Cloud URL: {ibm_cloud_url}")
+
+if not ibm_api_key or not ibm_project_id or not ibm_cloud_url:
+    raise ValueError(
+        "IBM Watson credentials are not set properly in the environment variables."
+    )
+
 model = Model(
     model_id=ModelTypes.GRANITE_13B_CHAT_V2,
     params={
         GenParams.MAX_NEW_TOKENS: 900,
         GenParams.RETURN_OPTIONS: {
-            'input_text': True,
-            'generated_tokens': True,
+            "input_text": True,
+            "generated_tokens": True,
         },
     },
     credentials=Credentials(
@@ -56,6 +66,7 @@ model = Model(
 granite_llm_ibm = WatsonxLLM(model=model)
 embedding_model = HuggingFaceEmbeddings()
 
+
 def extract_text_from_pdf(file_path):
     text = ""
     with fitz.open(file_path) as doc:
@@ -63,10 +74,14 @@ def extract_text_from_pdf(file_path):
             text += page.get_text()
     return text
 
+
 def embed_text(text):
     # Ensure the embedding is a 1D vector
     embedded = embedding_model.embed_documents([text])
-    return embedded[0] if isinstance(embedded, list) and len(embedded) == 1 else embedded
+    return (
+        embedded[0] if isinstance(embedded, list) and len(embedded) == 1 else embedded
+    )
+
 
 def cosine_similarity(vec1, vec2):
     return sklearn_cosine_similarity([vec1], [vec2])[0][0]
@@ -85,21 +100,22 @@ def cosine_similarity(vec1, vec2):
     #         )
     #     """))
 
+
 # def store_section_data(content_id, section_name, raw_text, embedded_text):
-    # with engine.connect() as conn:
-    #     conn.execute(text(f"""
-    #         INSERT INTO {db_name}.pitchdeck_section (content_id, section_name, section_content, section_embedding, content_id)
-    #         VALUES (:startup_id, :section_name, :section_content, :section_embedding, :content_id, :created_at, :updated_at, :content_id)
-    #     """), {
-    #         "section_name": section_name,
-    #         "section_content": raw_text,
-    #         "section_embedding": embedded_text,
-    #         "content_id": content_id,
-    #         "created_at": datetime.utcnow(),
-    #         "updated_at": datetime.utcnow(),
-    #         "content_id": content_id
-    #     })
-    #     return 
+# with engine.connect() as conn:
+#     conn.execute(text(f"""
+#         INSERT INTO {db_name}.pitchdeck_section (content_id, section_name, section_content, section_embedding, content_id)
+#         VALUES (:startup_id, :section_name, :section_content, :section_embedding, :content_id, :created_at, :updated_at, :content_id)
+#     """), {
+#         "section_name": section_name,
+#         "section_content": raw_text,
+#         "section_embedding": embedded_text,
+#         "content_id": content_id,
+#         "created_at": datetime.utcnow(),
+#         "updated_at": datetime.utcnow(),
+#         "content_id": content_id
+#     })
+#     return
 
 # def retrieve_sections(startup_id):
 #     with engine.connect() as conn:
@@ -112,6 +128,7 @@ def cosine_similarity(vec1, vec2):
 #             data[row["section_name"]] = row["section_content"]
 #     return data
 
+
 def call_llm_for_section(text, criteria, section_name):
     prompt_template = f"""
     Provided the following Pitch Deck content: {{{{text}}}}
@@ -120,17 +137,20 @@ def call_llm_for_section(text, criteria, section_name):
     
     {{{{criteria}}}}
     """
-    prompt = PromptTemplate(template=prompt_template, input_variables=["text", "criteria"])
+    prompt = PromptTemplate(
+        template=prompt_template, input_variables=["text", "criteria"]
+    )
     chain = RunnableSequence(prompt, granite_llm_ibm)
     response = chain.invoke({"text": text, "criteria": criteria})
-    
+
     # Return the section name and the extracted information
     return {section_name: response}
 
+
 def extract_sections(extracted_text, startup_id, content_id):
-    
+
     sections = {
-        "team" : [
+        "team": [
             """
      Analyze provided content and score the strength of the team section only from 1-10 based on available information and provide feedback on possible improvements.
 
@@ -151,9 +171,10 @@ def extract_sections(extracted_text, startup_id, content_id):
         "feedback_4": "The team has a clear vision but needs better execution plans.",
         "feedback_5": "The team should work on improving communication strategies within the group."
 
-    """],
+    """
+        ],
         "fundraising": [
-                    """
+            """
                         Analyze provided content and score the strength of the fundraising section only from 1-10 based on available information and provide feedback on possible improvements.
                         Optimal conditions for fundraising include:
                         - A clear and feasible plan for raising funds in the next 12-18 months
@@ -176,8 +197,7 @@ def extract_sections(extracted_text, startup_id, content_id):
                         """
         ],
         "market": [
-
-    """
+            """
     Score the strength of the market section from 1-10 based on available information and provide feedback on any possible improvements.
     Optimal conditions for the market include:
     - Clear understanding of the market size and growth potential
@@ -187,13 +207,9 @@ def extract_sections(extracted_text, startup_id, content_id):
     - Strategy for market entry and scaling
 
     """
-
-
-
         ],
         "business_model": [
-
-    """
+            """
     Score the strength of the business model section from 1-10 based on available information and provide feedback on possible improvements.
     Optimal conditions for the business model include:
     - Clear revenue model showing how the business will make money
@@ -203,10 +219,9 @@ def extract_sections(extracted_text, startup_id, content_id):
     - Validated business model with proof of concept or early traction
 
     """
-
         ],
         "product": [
-    """
+            """
     Score the strength of the product section from 1-10 based on available information and provide feedback on possible improvements.
     Optimal conditions for the product include:
     - Product is functional and has been tested with users
@@ -216,10 +231,9 @@ def extract_sections(extracted_text, startup_id, content_id):
     - Product solves a significant problem and has unique value propositions
     
     """
-
         ],
         "traction": [
-    """
+            """
     Score the strength of the traction section from 1-10 based on available information and provide feedback on possible improvements.
     Optimal conditions for traction include:
     - Demonstrated early sales and revenue growth
@@ -230,10 +244,9 @@ def extract_sections(extracted_text, startup_id, content_id):
 
 
     """
-
-        ]
+        ],
     }
-    
+
     # Create the pitchdeck_section table if it doesn't exist
     # create_pitchdeck_section_table()
 
@@ -243,9 +256,12 @@ def extract_sections(extracted_text, startup_id, content_id):
             result = conn.execute(text("SELECT content FROM knowledge_base"))
             section_contents = [row[0] for row in result]
             section_embeddings = [embed_text(content) for content in section_contents]
-            
+
             # Perform nearest neighbor analysis using cosine similarity
-            similarities = [cosine_similarity(embedded_text, embedding) for embedding in section_embeddings]
+            similarities = [
+                cosine_similarity(embedded_text, embedding)
+                for embedding in section_embeddings
+            ]
             nearest_neighbor_result = max(similarities) if similarities else None
             return nearest_neighbor_result
 
@@ -259,14 +275,6 @@ def extract_sections(extracted_text, startup_id, content_id):
         # store_section_data(startup_id, section, response, embedded_text, content_id)
         extracted_sections[section] = {
             "section_text": section_text,
-            "nearest_neighbor": nearest_neighbor_result
+            "nearest_neighbor": nearest_neighbor_result,
         }
     return extracted_sections
-
-
-
-
-
-
-
-
