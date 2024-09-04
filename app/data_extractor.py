@@ -66,15 +66,6 @@ model = Model(
 granite_llm_ibm = WatsonxLLM(model=model)
 embedding_model = HuggingFaceEmbeddings()
 
-
-def extract_text_from_pdf(file_path):
-    text = ""
-    with fitz.open(file_path) as doc:
-        for page in doc:
-            text += page.get_text()
-    return text
-
-
 def embed_text(text):
     # Ensure the embedding is a 1D vector
     embedded = embedding_model.embed_documents([text])
