@@ -6,7 +6,7 @@ from ibm_watsonx_ai.foundation_models import Model
 from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes
 from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
 from ibm_watsonx_ai.credentials import Credentials
-from ibm_watsonx_ai.foundation_models.extensions.langchain import WatsonxLLM
+from langchain_ibm import WatsonxLLM
 from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 
