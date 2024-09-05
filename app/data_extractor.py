@@ -1,10 +1,6 @@
-from ibm_watsonx_ai.foundation_models import Model
-from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes
-from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
-from ibm_watsonx_ai.credentials import Credentials
+from app.ibm_api import initialize_watsonx_ai, IBM_PROJECT_ID, IBM_SPACE_ID
+from langchain_ibm.llms import WatsonxLLM  # Ensure this import is correct
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_ibm import WatsonxLLM
-
 # from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import os
@@ -23,7 +19,7 @@ db_host = os.getenv("SINGLESTORE_HOST")
 db_port = int(os.getenv("SINGLESTORE_PORT"))
 db_user = os.getenv("SINGLESTORE_USER")
 db_password = os.getenv("SINGLESTORE_PASSWORD")
-db_name = os.getenv("SINGLESTORE_DATABASE")
+db_name = os.getenv("SINGLESTOR_DATABASE")
 db_url = os.getenv("SINGLESTORE_URL")
 
 singlestore_url = f"singlestoredb://{db_url}"
@@ -34,36 +30,18 @@ os.environ["SINGLESTOREDB_URL"] = singlestore_url
 knowledge_base_engine = create_engine(singlestore_url)
 
 # Initialize IBM Watson Assistant (Granite LLM)
-ibm_api_key = os.getenv("IBM_API_KEY")
-ibm_project_id = os.getenv("PROJECT_ID")
-ibm_cloud_url = os.getenv("IBM_CLOUD_URL")
+model = initialize_watsonx_ai()  # Ensure this returns the correct model format
 
-print(f"IBM API Key: {ibm_api_key}")
-print(f"IBM Project ID: {ibm_project_id}")
-print(f"IBM Cloud URL: {ibm_cloud_url}")
+# Extract model_id or deployment_id from the model if necessary
+model_id = model.model_id  
+project_id = IBM_PROJECT_ID
+space_id = IBM_SPACE_ID
 
-if not ibm_api_key or not ibm_project_id or not ibm_cloud_url:
-    raise ValueError(
-        "IBM Watson credentials are not set properly in the environment variables."
-    )
+# Convert the model to the required format for WatsonxLLM
+granite_llm_ibm = WatsonxLLM(model_id=model_id, project_id=project_id)  # Use model_id or deployment_id as needed
+# or
+# granite_llm_ibm = WatsonxLLM(deployment_id=deployment_id)  # If using deployment_id
 
-model = Model(
-    model_id=ModelTypes.GRANITE_13B_CHAT_V2,
-    params={
-        GenParams.MAX_NEW_TOKENS: 900,
-        GenParams.RETURN_OPTIONS: {
-            "input_text": True,
-            "generated_tokens": True,
-        },
-    },
-    credentials=Credentials(
-        api_key=ibm_api_key,
-        url=ibm_cloud_url,
-    ),
-    project_id=ibm_project_id,
-)
-
-granite_llm_ibm = WatsonxLLM(model=model)
 embedding_model = HuggingFaceEmbeddings()
 
 def embed_text(text):
@@ -125,7 +103,7 @@ def call_llm_for_section(text, criteria, section_name):
     Provided the following Pitch Deck content: {{{{text}}}}
 
     Please summarize the {{{{section_name}}}} and provide feedback for it based on the given criteria:
-    
+
     {{{{criteria}}}}
     """
     prompt = PromptTemplate(
@@ -220,7 +198,7 @@ def extract_sections(extracted_text, startup_id, content_id):
     - Feedback from prospective customers indicating strong interest
     - Validated product-market fit or evidence of traction
     - Product solves a significant problem and has unique value propositions
-    
+
     """
         ],
         "traction": [

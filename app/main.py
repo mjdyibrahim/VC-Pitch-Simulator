@@ -10,10 +10,10 @@ from app.data_extractor import extract_sections
 # from app.user_prompts import prompt_for_missing_info
 # from app.startup_metrics import calculate_metrics
 # from app.report_generator import generate_report
-from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
+# from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
 import requests
 
-# from sqlalchemy import create_engine, text
+# from sqlalchemy import create_engine, text"haTWPaO0ZSp6T6QiD22KWPVie1LdMYRAABRURny7d097"
 # from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
@@ -167,10 +167,11 @@ def main():
             )
             st.success("File content extracted successfully.")
 
-        with st.spinner("Now, shecking the provided information in your pitch deck..."):
+        with st.spinner("Now, assessing the provided information in your pitch deck..."):
             extracted_sections = extract_sections(
                 uploaded_file_path, file_id, original_filename
             )
+            st.success("Successfully assessed your pitch deck")
 
             # Display extracted data in two columns
             st.subheader("Extracted Startup Data")
@@ -181,24 +182,24 @@ def main():
                     st.write(f"### {section.capitalize()}")
                     st.text(extracted_sections[section])
 
-        # Check completeness and prompt for missing information if necessary
-        if (
-            not extracted_sections or len(extracted_sections) < 5
-        ):  # Adjust the condition based on your completeness criteria
-            st.warning(
-                "We couldn't find enough information. Our chat assistant wants to ask a few questions."
-            )
-            complete_startup_data = prompt_for_missing_info(extracted_sections)
-        else:
-            complete_startup_data = extracted_sections
+        # # Check completeness and prompt for missing information if necessary
+        # if (
+        #     not extracted_sections or len(extracted_sections) < 5
+        # ):  # Adjust the condition based on your completeness criteria
+        #     st.warning(
+        #         "We couldn't find enough information. Our chat assistant wants to ask a few questions."
+        #     )
+        #     complete_startup_data = prompt_for_missing_info(extracted_sections)
+        # else:
+        #     complete_startup_data = extracted_sections
 
-        # Calculate startup metrics
-        metrics = calculate_metrics(complete_startup_data)
+        # # Calculate startup metrics
+        # metrics = calculate_metrics(complete_startup_data)
 
-        # Generate and display report
-        report = generate_report(complete_startup_data, metrics)
-        st.subheader("VC Analysis Report")
-        st.write(report)
+        # # Generate and display report
+        # report = generate_report(complete_startup_data, metrics)
+        # st.subheader("VC Analysis Report")
+        # st.write(report)
 
         # Prompt user for VC Session
         if st.button("Start VC Session"):
