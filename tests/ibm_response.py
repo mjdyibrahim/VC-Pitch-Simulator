@@ -1,11 +1,12 @@
-from ibm_watsonx_ai import WatsonxAI
+from langchain_ibm.llms import WatsonxLLM
 from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
 
 def test_ibm_connection():
     # Initialize WatsonxAI client
-    watsonx_ai = WatsonxAI(
+    watsonx_ai = WatsonxLLM(
         api_key=IBM_API_KEY,
-        service_url=IBM_CLOUD_URL
+        service_url=IBM_CLOUD_URL,
+        project_id=PROJECT_ID
     )
 
     # Sample text to send to IBM Granite
