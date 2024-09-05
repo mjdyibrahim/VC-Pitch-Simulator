@@ -6,7 +6,8 @@ def test_ibm_connection():
     watsonx_ai = WatsonxLLM(
         model_id="granite-13b-chat-v2",
         api_key=IBM_API_KEY,
-        service_url=IBM_CLOUD_URL
+        service_url=IBM_CLOUD_URL,
+        project_id=PROJECT_ID
     )
 
     # Sample text to send to IBM Granite
