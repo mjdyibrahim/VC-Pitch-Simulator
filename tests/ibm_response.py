@@ -22,8 +22,7 @@ def test_ibm_connection():
             "min_new_tokens": 0,
             "stop_sequences": [],
             "repetition_penalty": 1
-        },
-        project_id=PROJECT_ID
+        }
     )
 
     # Print the response
