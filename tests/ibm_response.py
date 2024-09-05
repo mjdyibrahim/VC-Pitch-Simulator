@@ -1,4 +1,4 @@
-from ibm_watsonx_ai import WatsonxLLM
+from ibm_watsonx_ai.llms import WatsonxLLM
 from app.config import IBM_API_KEY, IBM_CLOUD_URL, PROJECT_ID
 
 def test_ibm_connection():
