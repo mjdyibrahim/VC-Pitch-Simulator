@@ -1,14 +1,10 @@
-from app.ibm_api import initialize_watsonx_ai, IBM_PROJECT_ID, IBM_SPACE_ID
-from langchain_ibm.llms import WatsonxLLM  # Ensure this import is correct
+from app.ibm_api import initialize_watsonx_ai
 from langchain_huggingface import HuggingFaceEmbeddings
-# from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import os
 import fitz  # PyMuPDF
 from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
 from sqlalchemy import create_engine, text
-from langchain_core.runnables import RunnableSequence
-from langchain.prompts import PromptTemplate
 from datetime import datetime
 
 # Load environment variables from .env file
@@ -32,16 +28,6 @@ knowledge_base_engine = create_engine(singlestore_url)
 # Initialize IBM Watson Assistant (Granite LLM)
 model = initialize_watsonx_ai()  # Ensure this returns the correct model format
 
-# Extract model_id or deployment_id from the model if necessary
-model_id = model.model_id  
-project_id = IBM_PROJECT_ID
-space_id = IBM_SPACE_ID
-
-# Convert the model to the required format for WatsonxLLM
-granite_llm_ibm = WatsonxLLM(model_id=model_id, project_id=project_id)  # Use model_id or deployment_id as needed
-# or
-# granite_llm_ibm = WatsonxLLM(deployment_id=deployment_id)  # If using deployment_id
-
 embedding_model = HuggingFaceEmbeddings()
 
 def embed_text(text):
@@ -51,173 +37,95 @@ def embed_text(text):
         embedded[0] if isinstance(embedded, list) and len(embedded) == 1 else embedded
     )
 
-
 def cosine_similarity(vec1, vec2):
     return sklearn_cosine_similarity([vec1], [vec2])[0][0]
-    # with engine.connect() as conn:
-    #     conn.execute(text(f"""
-    #         CREATE TABLE IF NOT EXISTS {db_name}.pitchdeck_section (
-    #             id SERIAL PRIMARY KEY,
-    #             startup_id VARCHAR(255),
-    #             section_name VARCHAR(255),
-    #             section_content TEXT,
-    #             section_embedding TEXT,
-    #             content_id INTEGER,
-    #             created_at TIMESTAMP,
-    #             updated_at TIMESTAMP,
-    #             FOREIGN KEY (content_id) REFERENCES {db_name}.pitchdeck_content(id)
-    #         )
-    #     """))
-
-
-# def store_section_data(content_id, section_name, raw_text, embedded_text):
-# with engine.connect() as conn:
-#     conn.execute(text(f"""
-#         INSERT INTO {db_name}.pitchdeck_section (content_id, section_name, section_content, section_embedding, content_id)
-#         VALUES (:startup_id, :section_name, :section_content, :section_embedding, :content_id, :created_at, :updated_at, :content_id)
-#     """), {
-#         "section_name": section_name,
-#         "section_content": raw_text,
-#         "section_embedding": embedded_text,
-#         "content_id": content_id,
-#         "created_at": datetime.utcnow(),
-#         "updated_at": datetime.utcnow(),
-#         "content_id": content_id
-#     })
-#     return
-
-# def retrieve_sections(startup_id):
-#     with engine.connect() as conn:
-#         result = conn.execute(text(f"""
-#             SELECT section_name, section_content FROM {db_name}.pitchdeck_section
-#             WHERE startup_id = :startup_id
-#         """), {"startup_id": startup_id})
-#         data = {}
-#         for row in result:
-#             data[row["section_name"]] = row["section_content"]
-#     return data
-
 
 def call_llm_for_section(text, criteria, section_name):
-    prompt_template = f"""
-    Provided the following Pitch Deck content: {{{{text}}}}
+    prompt = f"""
+    Provided the following Pitch Deck content: {text}
 
-    Please summarize the {{{{section_name}}}} and provide feedback for it based on the given criteria:
+    Please summarize the {section_name} and provide feedback for it based on the given criteria:
 
-    {{{{criteria}}}}
+    {criteria}
     """
-    prompt = PromptTemplate(
-        template=prompt_template, input_variables=["text", "criteria"]
-    )
-    chain = RunnableSequence(prompt, granite_llm_ibm)
-    response = chain.invoke({"text": text, "criteria": criteria})
-
-    # Return the section name and the extracted information
-    return {section_name: response}
+    response = model.generate_text(prompt=[prompt])
+    print(f"Response for section {section_name}: {response}")  # Debugging line
+    # Adjust the following line based on the actual structure of the response
+    return {section_name: response[0]}
 
 
 def extract_sections(extracted_text, startup_id, content_id):
-
     sections = {
         "team": [
             """
-     Analyze provided content and score the strength of the team section only from 1-10 based on available information and provide feedback on possible improvements.
+            Analyze provided content and score the strength of the team section only from 1-10 based on available information and provide feedback on possible improvements.
 
-    Optimal conditions for the team include:
-    - 2-3 cofounders, with near equal equity
-    - Specialized academic degrees and/or expertise in their areas
-    - Half-time or more commitment to the startup
-    - Previous startup experience and successful exits
-    - Team working together for a significant period
-    - Presence of mentors with substantial experience
-
-        Example of team_feedback output format:
-
-        "team_feedback": {
-        "feedback_1": "The team has strong experience and a clear vision, but they need more diversity in skills.",
-        "feedback_2": "The team's track record is impressive, but they lack experience in scaling businesses.",
-        "feedback_3": "There is a strong leadership team, but more emphasis on technical skills is needed.",
-        "feedback_4": "The team has a clear vision but needs better execution plans.",
-        "feedback_5": "The team should work on improving communication strategies within the group."
-
-    """
+            Optimal conditions for the team include:
+            - 2-3 cofounders, with near equal equity
+            - Specialized academic degrees and/or expertise in their areas
+            - Half-time or more commitment to the startup
+            - Previous startup experience and successful exits
+            - Team working together for a significant period
+            - Presence of mentors with substantial experience
+            """
         ],
         "fundraising": [
             """
-                        Analyze provided content and score the strength of the fundraising section only from 1-10 based on available information and provide feedback on possible improvements.
-                        Optimal conditions for fundraising include:
-                        - A clear and feasible plan for raising funds in the next 12-18 months
-                        - Secured initial funding or demonstrated progress in fundraising
-                        - Identified potential sources of funding such as venture capital, angel investors, or grants
-                        - Detailed and realistic financial projection
-                        - A strong pitch deck and business plan that have been refined and tested with investors
+            Analyze provided content and score the strength of the fundraising section only from 1-10 based on available information and provide feedback on possible improvements.
+            Optimal conditions for fundraising include:
+            - A clear and feasible plan for raising funds in the next 12-18 months
+            - Secured initial funding or demonstrated progress in fundraising
+            - Identified potential sources of funding such as venture capital, angel investors, or grants
+            - Detailed and realistic financial projection
+            - A strong pitch deck and business plan that have been refined and tested with investors
 
-                        Example of fundraising_feedback output format:
-
-                        "fundraising_feedback": {
-                        "score": 7,
-                        "feedback_1": "The startup has secured initial funding but needs to outline a clearer path for future rounds.",
-                        "feedback_2": "Funding sources are diversified, but there is a need for more detailed financial projections.",
-                        "feedback_3": "The pitch to investors is strong but needs better risk management strategies.",
-                        "feedback_4": "Current funding is sufficient for initial growth but not for scaling.",
-                        "feedback_5": "Consider exploring alternative funding options like grants or strategic partnerships."
-                        }
-
-                        """
+            """
         ],
         "market": [
             """
-    Score the strength of the market section from 1-10 based on available information and provide feedback on any possible improvements.
-    Optimal conditions for the market include:
-    - Clear understanding of the market size and growth potential
-    - Defined target market and a plan to capture a significant market share
-    - Detailed information on market dynamics, customer needs, and competitive landscape
-    - Evidence of market validation, such as customer interviews or pilot studies
-    - Strategy for market entry and scaling
-
-    """
+            Score the strength of the market section from 1-10 based on available information and provide feedback on any possible improvements.
+            Optimal conditions for the market include:
+            - Clear understanding of the market size and growth potential
+            - Defined target market and a plan to capture a significant market share
+            - Detailed information on market dynamics, customer needs, and competitive landscape
+            - Evidence of market validation, such as customer interviews or pilot studies
+            - Strategy for market entry and scaling
+            """
         ],
         "business_model": [
             """
-    Score the strength of the business model section from 1-10 based on available information and provide feedback on possible improvements.
-    Optimal conditions for the business model include:
-    - Clear revenue model showing how the business will make money
-    - Identified who will pay for the service and a strategy for acquiring customers
-    - Defined pricing strategy and detailed plan for scaling revenue
-    - Identified and planned for key metrics like customer acquisition cost and lifetime value
-    - Validated business model with proof of concept or early traction
-
-    """
+            Score the strength of the business model section from 1-10 based on available information and provide feedback on possible improvements.
+            Optimal conditions for the business model include:
+            - Clear revenue model showing how the business will make money
+            - Identified who will pay for the service and a strategy for acquiring customers
+            - Defined pricing strategy and detailed plan for scaling revenue
+            - Identified and planned for key metrics like customer acquisition cost and lifetime value
+            - Validated business model with proof of concept or early traction
+            """
         ],
         "product": [
             """
-    Score the strength of the product section from 1-10 based on available information and provide feedback on possible improvements.
-    Optimal conditions for the product include:
-    - Product is functional and has been tested with users
-    - Clear roadmap for product development and future features
-    - Feedback from prospective customers indicating strong interest
-    - Validated product-market fit or evidence of traction
-    - Product solves a significant problem and has unique value propositions
-
-    """
+            Score the strength of the product section from 1-10 based on available information and provide feedback on possible improvements.
+            Optimal conditions for the product include:
+            - Product is functional and has been tested with users
+            - Clear roadmap for product development and future features
+            - Feedback from prospective customers indicating strong interest
+            - Validated product-market fit or evidence of traction
+            - Product solves a significant problem and has unique value propositions
+            """
         ],
         "traction": [
             """
-    Score the strength of the traction section from 1-10 based on available information and provide feedback on possible improvements.
-    Optimal conditions for traction include:
-    - Demonstrated early sales and revenue growth
-    - Clear track record of customer acquisition and retention
-    - Metrics and KPIs showing growth and market validation
-    - Testimonials or case studies from early customers
-    - Clear evidence of traction, such as user growth or partnership agreements
-
-
-    """
+            Score the strength of the traction section from 1-10 based on available information and provide feedback on possible improvements.
+            Optimal conditions for traction include:
+            - Demonstrated early sales and revenue growth
+            - Clear track record of customer acquisition and retention
+            - Metrics and KPIs showing growth and market validation
+            - Testimonials or case studies from early customers
+            - Clear evidence of traction, such as user growth or partnership agreements
+            """
         ],
     }
-
-    # Create the pitchdeck_section table if it doesn't exist
-    # create_pitchdeck_section_table()
 
     def nearest_neighbor_analysis(embedded_text, section_name):
         with knowledge_base_engine.connect() as conn:
@@ -241,7 +149,6 @@ def extract_sections(extracted_text, startup_id, content_id):
         embedded_text = embed_text(section_text)
         extracted_sections[section] = section_text
         nearest_neighbor_result = nearest_neighbor_analysis(embedded_text, section)
-        # store_section_data(startup_id, section, response, embedded_text, content_id)
         extracted_sections[section] = {
             "section_text": section_text,
             "nearest_neighbor": nearest_neighbor_result,
