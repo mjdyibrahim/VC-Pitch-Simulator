@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     bash \
     git \
-    pip3 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python -m venv /app/venv
