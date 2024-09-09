@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 RUN python -m venv /app/venv
 
 COPY . /app
-RUN source /app/venv/bin/activate
+RUN bash -c "source /app/venv/bin/activate"
 
 
 RUN /app/venv/bin/pip install --upgrade pip
