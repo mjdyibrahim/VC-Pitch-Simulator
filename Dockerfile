@@ -18,8 +18,7 @@ RUN . /app/venv/bin/activate
 # Set environment variable to use system-wide Python packages
 ENV PYTHONPATH=/usr/local/lib/python3.11/dist-packages:$PYTHONPATH
 
-# RUN /app/venv/bin/pip install --upgrade pip
-# RUN /app/venv/bin/pip install -r requirements.txt
+RUN /app/venv/bin/pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8501
 
