@@ -17,12 +17,9 @@ COPY . /app
 
 SHELL ["/bin/bash", "-c"]
 
-RUN source /app/venv/bin/activate
-
-
 RUN /app/venv/bin/pip install --upgrade pip
 RUN /app/venv/bin/pip install -r requirements.txt
 
 EXPOSE 8501
 
-ENTRYPOINT ["streamlit", "run", "run.py", "--server.port=8501", "--server.headless=True", "--server.enableCORS=False", "--server.enableXsrfProtection=False"]
+ENTRYPOINT ["/app/venv/bin/streamlit", "run", "run.py", "--server.port=8501", "--server.headless=True", "--server.enableCORS=False", "--server.enableXsrfProtection=False"]
