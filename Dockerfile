@@ -23,4 +23,4 @@ ENV PYTHONPATH=/usr/local/lib/python3.11/dist-packages:$PYTHONPATH
 
 EXPOSE 8501
 
-ENTRYPOINT ["streamlit", "run", "run.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "run.py", "--server.port=8501", "--server.headless=True", "--server.enableCORS=False", "--server.enableXsrfProtection=False"]
